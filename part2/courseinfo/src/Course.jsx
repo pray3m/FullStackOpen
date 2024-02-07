@@ -6,7 +6,6 @@ const Course = ({ course }) => {
     <div>
       <Header course={course.name} />
       <Content parts={course.parts} />
-     
     </div>
   );
 };
