@@ -44,6 +44,7 @@ button {
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
+  margin-left: 16px;
 }
 button:hover {
   border-color: #646cff;
@@ -58,6 +59,7 @@ input {
   border-radius: 10px;
   border: none;
   margin-bottom: 16px;
+  margin-left: 16px;
 }
 
 @media (prefers-color-scheme: light) {
