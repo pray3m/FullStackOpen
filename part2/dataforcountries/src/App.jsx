@@ -7,6 +7,7 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [allCountries, setAllCountries] = useState([]);
   const [countries, setCountries] = useState([]);
+  const [showCountryIndex, setShowCountryIndex] = useState(null);
 
   useEffect(() => {
     countryService
@@ -28,6 +29,9 @@ function App() {
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value.toLowerCase());
   };
+
+  const handleToggleShow = (i) =>
+    setShowCountryIndex(i === showCountryIndex ? null : i);
 
   const isSingleCountry = countries?.length === 1;
 
@@ -51,7 +55,15 @@ function App() {
           <p>Too many matches. make the query more specific</p>
         ) : (
           !isSingleCountry &&
-          countries.map(({ name }, i) => <p key={i}>{name?.common}</p>)
+          countries.map((country, i) => (
+            <div key={i}>
+              <p>
+                {country?.name?.common}{" "}
+                <button onClick={() => handleToggleShow(i)}>show</button>{" "}
+              </p>
+              {showCountryIndex === i && <Country country={country} />}
+            </div>
+          ))
         )}
       </div>
     </>
