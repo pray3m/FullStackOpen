@@ -35,8 +35,6 @@ function App() {
 
   const isSingleCountry = countries?.length === 1;
 
-  console.log(countries);
-
   return (
     <>
       <h1>
@@ -59,7 +57,7 @@ function App() {
             <div key={i}>
               <p>
                 {country?.name?.common}{" "}
-                <button onClick={() => handleToggleShow(i)}>show</button>{" "}
+                <button onClick={() => handleToggleShow(i)}> show </button>{" "}
               </p>
               {showCountryIndex === i && <Country country={country} />}
             </div>
