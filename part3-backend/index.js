@@ -1,5 +1,6 @@
 const express = require("express");
 const morgan = require("morgan");
+const cors = require("cors");
 
 let persons = [
   {
@@ -31,6 +32,7 @@ let persons = [
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 // Setting up logger
 morgan.token("data", (req) => JSON.stringify(req.body));
@@ -94,7 +96,7 @@ app.post("/api/persons", (req, res) => {
   res.json(newPerson);
 });
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () =>
-  console.log(`listening on port http://localhost:${PORT}`)
+  console.log(`Server listening on  http://localhost:${PORT}`)
 );
