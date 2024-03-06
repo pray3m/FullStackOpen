@@ -1,7 +1,5 @@
 const express = require("express");
-
-const app = express();
-app.use(express.json());
+const morgan = require("morgan");
 
 let persons = [
   {
@@ -31,7 +29,14 @@ let persons = [
   },
 ];
 
-const date = new Date().toString();
+const app = express();
+app.use(express.json());
+
+// Setting up logger
+morgan.token("data", (req) => JSON.stringify(req.body));
+app.use(
+  morgan(":method :url :status :res[content-length] - :response-time ms :data")
+);
 
 app.get("/", (req, res) => {
   res.send("<h1> Hey (FullStackOpen) 👨‍💻 </h1>");
@@ -39,7 +44,7 @@ app.get("/", (req, res) => {
 
 app.get("/info", (req, res) => {
   res.send(`<p>Phonebook has info for ${persons.length} people</p>
-  <p> ${date}  </p>
+  <p> ${new Date().toString()}  </p>
     `);
 });
 
