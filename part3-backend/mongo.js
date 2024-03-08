@@ -20,6 +20,14 @@ const personSchema = new mongoose.Schema({
   number: String,
 });
 
+personSchema.set("toJSON", {
+  transform: (doc, returnedObj) => {
+    returnedObj.id = returnedObj._id.toString();
+    delete returnedObj._id;
+    delete returnedObj.__v;
+  },
+});
+
 const Person = mongoose.model("Person", personSchema);
 
 if (name && number) {
