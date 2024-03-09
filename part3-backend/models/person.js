@@ -1,16 +1,15 @@
-const { error } = require("console");
-const mongoose = require("mongoose");
+const mongoose = require("mongoose")
 
-mongoose.set("strictQuery", false);
+mongoose.set("strictQuery", false)
 
-const url = process.env.MONGODB_URI;
+const url = process.env.MONGODB_URI
 
-console.log("Connecting to ", url);
+console.log("Connecting to ", url)
 
 mongoose
   .connect(url)
-  .then((result) => console.log("Connected to MongoDB!"))
-  .catch((error) => console.log("Error connecting to MongoDB:", error.message));
+  .then((_result) => console.log("Connected to MongoDB!"))
+  .catch((error) => console.log("Error connecting to MongoDB:", error.message))
 
 const personSchema = new mongoose.Schema({
   name: {
@@ -24,14 +23,14 @@ const personSchema = new mongoose.Schema({
     required: true,
     validate: (v) => /\d{2,3}-\d+/.test(v),
   },
-});
+})
 
 personSchema.set("toJSON", {
-  transform: (doc, returnedObj) => {
-    returnedObj.id = returnedObj._id.toString();
-    delete returnedObj._id;
-    delete returnedObj.__v;
+  transform: (_doc, returnedObj) => {
+    returnedObj.id = returnedObj._id.toString()
+    delete returnedObj._id
+    delete returnedObj.__v
   },
-});
+})
 
-module.exports = mongoose.model("Person", personSchema);
+module.exports = mongoose.model("Person", personSchema)
