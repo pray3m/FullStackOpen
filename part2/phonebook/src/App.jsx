@@ -53,6 +53,7 @@ const App = () => {
               setErrorMsg(
                 `Information of ${personToUpdate.name} has already been removed from the server.`
               );
+              setTimeout(() => setErrorMsg(null), 5000);
             });
       }
 
@@ -61,11 +62,18 @@ const App = () => {
       return;
     }
 
-    personService.create(newPerson).then((returnedPerson) => {
-      setPersons(persons.concat(returnedPerson));
-      setSuccessMsg(`Added ${newPerson.name}!`);
-      setTimeout(() => setSuccessMsg(null), 5000);
-    });
+    personService
+      .create(newPerson)
+      .then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setSuccessMsg(`Added ${newPerson.name}!`);
+        setTimeout(() => setSuccessMsg(null), 5000);
+      })
+      .catch((error) => {
+        console.log(error);
+        setErrorMsg(error.response.data.error);
+        setTimeout(() => setErrorMsg(null), 5000);
+      });
 
     setNewName("");
     setNewNumber("");
