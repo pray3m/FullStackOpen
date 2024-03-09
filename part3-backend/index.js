@@ -4,7 +4,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 
 const Person = require("./models/person");
-const { error } = require("console");
+const { error, count } = require("console");
 
 const app = express();
 app.use(express.static("dist"));
@@ -22,10 +22,14 @@ app.get("/", (req, res) => {
   res.send("<h1> Hey (FullStackOpen) 👨‍💻 </h1>");
 });
 
-app.get("/info", (req, res) => {
-  res.send(`<p>Phonebook has info for ${persons.length} people</p>
-  <p> ${new Date().toString()}  </p>
-    `);
+app.get("/info", (req, res, next) => {
+  Person.estimatedDocumentCount({})
+    .then((c) => {
+      res.send(`<p>Phonebook has info for ${c} people</p>
+    <p> ${new Date().toString()}  </p>
+  `);
+    })
+    .catch((error) => next(error));
 });
 
 // Person API Routes
@@ -61,8 +65,6 @@ app.post("/api/persons", (req, res, next) => {
       error: "name or number is missing",
     });
   }
-
-  
 
   const person = new Person({
     name: body.name,
