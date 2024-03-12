@@ -4,7 +4,12 @@ const assert = require("node:assert");
 const listHelper = require("../utils/list_helper");
 
 describe("total likes", () => {
-  test("when there are many blogs", () => {
+  test("of a empty list is zero", () => {
+    const blog = [];
+    assert.strictEqual(listHelper.totalLikes(blog), 0);
+  });
+
+  test("of a bigger list is calculated right", () => {
     const blogs = [
       {
         _id: "5a422a851b54a676234d17f7",
@@ -60,7 +65,7 @@ describe("total likes", () => {
     assert.strictEqual(result, 36);
   });
 
-  test("should equal the likes, when list has only one blog", () => {
+  test("when the list has only one blog equals the likes of that", () => {
     const listWithOneBlog = [
       {
         _id: "5a422a851b54a676234d17f7",
