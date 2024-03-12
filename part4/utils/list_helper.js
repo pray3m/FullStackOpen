@@ -17,8 +17,31 @@ const favoriteBlog = (blogs) => {
   );
 };
 
+const mostBlogs = (blogs) => {
+  if (blogs.length === 0) return null;
+
+  const blogCounts = [];
+
+  blogs.forEach((blog) => {
+    const existingAuthor = blogCounts.find(
+      (item) => item.author === blog.author
+    );
+    if (existingAuthor) {
+      existingAuthor.blogs++;
+    } else {
+      blogCounts.push({ author: blog.author, blogs: 1 });
+    }
+  });
+
+  return blogCounts.reduce(
+    (blog, max) => (blog.blogs > max.blogs ? blog : max),
+    blogCounts[0]
+  );
+};
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
+  mostBlogs,
 };
