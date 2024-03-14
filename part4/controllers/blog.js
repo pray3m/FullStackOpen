@@ -20,7 +20,18 @@ blogsRouter.get("/:id", async (req, res, next) => {
 });
 
 blogsRouter.post("/", async (req, res, next) => {
-  const blog = new Blog(req.body);
+  const { title, author, url, likes } = req.body;
+
+  if (!title || !url) {
+    return res.status(400).json({ error: "Title and url are required" });
+  }
+
+  const blog = new Blog({
+    title,
+    author,
+    url,
+    likes: likes || 0,
+  });
 
   try {
     const savedBlog = await blog.save();
