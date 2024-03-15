@@ -1,4 +1,5 @@
 const blogsRouter = require("express").Router();
+const blog = require("../models/blog");
 const Blog = require("../models/blog");
 
 blogsRouter.get("/", async (req, res) => {
@@ -36,6 +37,44 @@ blogsRouter.post("/", async (req, res, next) => {
   try {
     const savedBlog = await blog.save();
     res.status(201).json(savedBlog);
+  } catch (exception) {
+    next(exception);
+  }
+});
+
+blogsRouter.delete("/:id", async (req, res, next) => {
+  try {
+    const result = await Blog.findByIdAndDelete(req.params.id);
+    if (result) res.status(204).end();
+  } catch (exception) {
+    next(exception);
+  }
+});
+
+blogsRouter.put("/:id", async (req, res, next) => {
+  const { title, author, url, likes } = req.body;
+
+  try {
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      req.params.id,
+      {
+        title,
+        author,
+        url,
+        likes,
+      },
+      {
+        new: true,
+        runValidators: true,
+        context: "query",
+      }
+    );
+
+    if (!updatedBlog) {
+      return res.status(404).json({ error: "Blog not found" });
+    }
+
+    res.json(updatedBlog);
   } catch (exception) {
     next(exception);
   }
