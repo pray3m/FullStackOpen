@@ -27,6 +27,8 @@ app.use(cors());
 app.use(express.static("dist"));
 app.use(express.json());
 
+app.use(middleware.tokenExtractor);
+
 //  Request logger
 morgan.token("data", (req) => JSON.stringify(req.body));
 app.use(
