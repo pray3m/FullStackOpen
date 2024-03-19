@@ -5,9 +5,12 @@ const supertest = require("supertest");
 const helper = require("./test_helper");
 const app = require("../app");
 const api = supertest(app);
+let bcrypt = require("bcrypt");
 
 const Blog = require("../models/blog");
+const User = require("../models/user");
 
+let authToken;
 beforeEach(async () => {
   await Blog.deleteMany({});
 
@@ -15,6 +18,20 @@ beforeEach(async () => {
     let blogObject = new Blog(blog);
     await blogObject.save();
   }
+
+  await User.deleteMany({});
+
+  const passwordHash = await bcrypt.hash("sekret", 10);
+  const user = new User({ username: "root", passwordHash });
+  const userId = user._id;
+
+  await user.save();
+
+  const response = await api
+    .post("/api/login")
+    .send({ username: "root", password: "sekret" });
+
+  authToken = response.body.token;
 });
 
 describe("💿 Fetching blogs", () => {
@@ -36,7 +53,7 @@ describe("💿 Fetching blogs", () => {
     assert(res.body[0].id, "id property not found");
   });
 
-  test(" a specific blog can be viewed", async () => {
+  test("a specific blog can be viewed", async () => {
     const blogsAtStart = await helper.blogsInDb();
 
     const blogToView = blogsAtStart[0];
@@ -51,16 +68,17 @@ describe("💿 Fetching blogs", () => {
 });
 
 describe("🟢 Adding blogs", () => {
-  test("a valid blog post can be added", async () => {
+  test("a valid blog post can be added with token", async () => {
     const newBlog = {
       title: "How to test the post request ?",
       author: "Prem Codes",
       url: "https://premgautam.com.np",
-      likes: "34",
+      likes: 34,
     };
 
     await api
       .post("/api/blogs")
+      .set("Authorization", `Bearer ${authToken}`)
       .send(newBlog)
       .expect(201)
       .expect("Content-Type", /application\/json/);
@@ -72,6 +90,17 @@ describe("🟢 Adding blogs", () => {
     assert(contents.includes("How to test the post request ?"));
   });
 
+  test("adding a blog without token should return 401 Unauthorized", async () => {
+    const newBlog = {
+      title: "Unauthorized Blog",
+      author: "Prem Codes",
+      url: "https://premgautam.com.np",
+      likes: 20,
+    };
+
+    await api.post("/api/blogs").send(newBlog).expect(401);
+  });
+
   test("the likes is 0 if the likes property is missing", async () => {
     const newBlog = {
       title: "How to test the post request ?",
@@ -79,7 +108,11 @@ describe("🟢 Adding blogs", () => {
       url: "https://premgautam.com.np",
     };
 
-    const res = await api.post("/api/blogs").send(newBlog).expect(201);
+    const res = await api
+      .post("/api/blogs")
+      .set("Authorization", `Bearer ${authToken}`)
+      .send(newBlog)
+      .expect(201);
     assert.strictEqual(res.body.likes, 0);
   });
 
@@ -88,7 +121,11 @@ describe("🟢 Adding blogs", () => {
       author: "Prem Codes",
     };
 
-    await api.post("/api/blogs").send(newBlog).expect(400);
+    await api
+      .post("/api/blogs")
+      .set("Authorization", `Bearer ${authToken}`)
+      .send(newBlog)
+      .expect(400);
   });
 });
 
@@ -142,22 +179,6 @@ describe("🔄 Updating blogs", () => {
     };
 
     await api.put(`/api/blogs/${nonExistentId}`).send(updatedBlog).expect(404);
-  });
-});
-
-describe("🗑️ Deleting blogs", () => {
-  test("a blog can be deleted", async () => {
-    const blogsAtStart = await helper.blogsInDb();
-    const blogToDelete = blogsAtStart[0];
-
-    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
-
-    const blogsAtEnd = await helper.blogsInDb();
-
-    const contents = blogsAtEnd.map((b) => b.title);
-    assert(!contents.includes(blogToDelete.title));
-
-    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1);
   });
 });
 

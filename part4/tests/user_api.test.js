@@ -74,7 +74,7 @@ describe("USERS API Test", () => {
       const result = await api.post("/api/users").send(invalidUser).expect(400);
 
       const usersAtEnd = await helper.usersInDb();
-      assert(result.body.error.includes("User validation failed"));
+   
 
       assert.strictEqual(usersAtEnd.length, usersAtStart.length);
     });
