@@ -1,0 +1,9 @@
+- FullStackOpen
+
+#+HTML: <img src="./img.svg" align="right" width="100">
+
+This repo contains my solutions to the exercises of the online course "Full Stack Open 2023" by the University of Helsinki.
+
+#+begin_quote
+This course serves as an introduction to modern web application development with JavaScript. The main focus is on building single page applications with ReactJS that use REST APIs built with Node.js. The course also contains a section on GraphQL, a modern alternative to REST APIs.
+#+end_quote
