@@ -10,7 +10,7 @@ const Login = ({
 }) => {
   return (
     <form onSubmit={handleLogin}>
-      <h2>Login to the application</h2>
+      <h2>Login to the Blogger </h2>
       <div>
         username
         <input
