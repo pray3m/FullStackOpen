@@ -14,7 +14,7 @@ const BlogForm = ({
     url: "",
   });
 
-  const handleSubmit = async (e) => {
+  const addBlog = async (e) => {
     e.preventDefault();
     blogFormRef.current.toggleVisibility();
     try {
@@ -42,7 +42,7 @@ const BlogForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={addBlog}>
       <h2>create new</h2>
       title:
       <input

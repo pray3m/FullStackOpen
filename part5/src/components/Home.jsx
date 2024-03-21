@@ -4,12 +4,17 @@ import BlogForm from "./BlogForm";
 import blogService from "../services/blogs";
 import Togglable from "./Togglable";
 
-const Blogs = ({ user, handleLogout, setSuccessMsg, setErrorMsg }) => {
+const Home = ({ user, setUser, setSuccessMsg, setErrorMsg }) => {
   const [blogs, setBlogs] = useState([]);
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
   }, []);
+
+  const handleLogout = () => {
+    window.localStorage.removeItem("loggedUser");
+    setUser(null);
+  };
 
   const blogFormRef = useRef();
 
@@ -35,4 +40,4 @@ const Blogs = ({ user, handleLogout, setSuccessMsg, setErrorMsg }) => {
   );
 };
 
-export default Blogs;
+export default Home;

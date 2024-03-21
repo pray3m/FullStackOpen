@@ -4,7 +4,8 @@ import blogService from "./services/blogs";
 import Login from "./components/Login";
 import loginService from "./services/login";
 import Notification from "./components/Notification";
-import Blogs from "./components/Blogs";
+import Blogs from "./components/Home";
+import Home from "./components/Home";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -42,11 +43,6 @@ const App = () => {
     setPassword("");
   };
 
-  const handleLogout = () => {
-    window.localStorage.removeItem("loggedUser");
-    setUser(null);
-  };
-
   return (
     <div>
       <Notification errorMsg={errorMsg} successMsg={successMsg} />
@@ -60,9 +56,9 @@ const App = () => {
           handleLogin={handleLogin}
         />
       ) : (
-        <Blogs
+        <Home
           user={user}
-          handleLogout={handleLogout}
+          setUser={setUser}
           setErrorMsg={setErrorMsg}
           setSuccessMsg={setSuccessMsg}
         />
