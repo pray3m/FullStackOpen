@@ -1,14 +1,12 @@
 import { useState, useEffect } from "react";
 import "./App.css";
-import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import Login from "./components/Login";
 import loginService from "./services/login";
-import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
+import Blogs from "./components/Blogs";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -23,10 +21,6 @@ const App = () => {
     const user = JSON.parse(loggedUser);
     blogService.setToken(user.token);
     setUser(user);
-  }, []);
-
-  useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
   }, []);
 
   const handleLogin = async (e) => {
@@ -66,22 +60,12 @@ const App = () => {
           handleLogin={handleLogin}
         />
       ) : (
-        <div>
-          <h2>blogs</h2>
-          <p>
-            {user?.name} is logged in{" "}
-            <button onClick={handleLogout}>logout</button>
-          </p>
-          <BlogForm
-            blogs={blogs}
-            setBlogs={setBlogs}
-            setErrorMsg={setErrorMsg}
-            setSuccessMsg={setSuccessMsg}
-          />
-          {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
-          ))}
-        </div>
+        <Blogs
+          user={user}
+          handleLogout={handleLogout}
+          setErrorMsg={setErrorMsg}
+          setSuccessMsg={setSuccessMsg}
+        />
       )}
     </div>
   );

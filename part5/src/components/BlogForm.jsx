@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import blogService from "../services/blogs";
 
-const BlogForm = ({ blogs, setBlogs, setSuccessMsg, setErrorMsg }) => {
+const BlogForm = ({
+  blogs,
+  setBlogs,
+  setSuccessMsg,
+  setErrorMsg,
+  blogFormRef,
+}) => {
   const [blog, setBlog] = useState({
     title: "",
     author: "",
@@ -10,6 +16,7 @@ const BlogForm = ({ blogs, setBlogs, setSuccessMsg, setErrorMsg }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    blogFormRef.current.toggleVisibility();
     try {
       const savedBlog = await blogService.create(blog);
       setBlogs(blogs.concat(savedBlog));
