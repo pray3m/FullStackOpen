@@ -4,6 +4,8 @@ import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import Login from "./components/Login";
 import loginService from "./services/login";
+import BlogForm from "./components/BlogForm";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -11,11 +13,15 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const [successMsg, setSuccessMsg] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+
   useEffect(() => {
     const loggedUser = window.localStorage.getItem("loggedUser");
     if (!loggedUser) return;
 
     const user = JSON.parse(loggedUser);
+    blogService.setToken(user.token);
     setUser(user);
   }, []);
 
@@ -29,26 +35,18 @@ const App = () => {
       console.log("Logging in with", username, password);
       const user = await loginService.login({ username, password });
       window.localStorage.setItem("loggedUser", JSON.stringify(user));
+      blogService.setToken(user.token);
       setUser(user);
-    } catch (error) {
-      console.log(error);
+    } catch (ex) {
+      if (ex.response.data) setErrorMsg(ex.response.data.error);
+      setErrorMsg("something went wrong");
+      setTimeout(() => {
+        setErrorMsg(null);
+      }, 4000);
     }
     setUsername("");
     setPassword("");
   };
-
-  if (user === null) {
-    return (
-      <Login
-        setUser={setUser}
-        username={username}
-        password={password}
-        setUsername={setUsername}
-        setPassword={setPassword}
-        handleLogin={handleLogin}
-      />
-    );
-  }
 
   const handleLogout = () => {
     window.localStorage.removeItem("loggedUser");
@@ -57,13 +55,34 @@ const App = () => {
 
   return (
     <div>
-      <h2>blogs</h2>
-      <p>
-        {user?.name} is logged in <button onClick={handleLogout}>logout</button>
-      </p>
-      {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
-      ))}
+      <Notification errorMsg={errorMsg} successMsg={successMsg} />
+      {user === null ? (
+        <Login
+          setUser={setUser}
+          username={username}
+          password={password}
+          setUsername={setUsername}
+          setPassword={setPassword}
+          handleLogin={handleLogin}
+        />
+      ) : (
+        <div>
+          <h2>blogs</h2>
+          <p>
+            {user?.name} is logged in{" "}
+            <button onClick={handleLogout}>logout</button>
+          </p>
+          <BlogForm
+            blogs={blogs}
+            setBlogs={setBlogs}
+            setErrorMsg={setErrorMsg}
+            setSuccessMsg={setSuccessMsg}
+          />
+          {blogs.map((blog) => (
+            <Blog key={blog.id} blog={blog} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
