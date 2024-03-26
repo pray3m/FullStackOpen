@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
-import blogService from "./services/blogs";
-import Login from "./components/Login";
-import loginService from "./services/login";
-import Notification from "./components/Notification";
-import Blogs from "./components/Home";
 import Home from "./components/Home";
+import Login from "./components/Login";
+import Notification from "./components/Notification";
+import blogService from "./services/blogs";
+import loginService from "./services/login";
 
 const App = () => {
   const [user, setUser] = useState(null);

@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import loginService from "../services/login";
+import PropTypes from "prop-types";
 
 const Login = ({
   username,
@@ -32,6 +31,14 @@ const Login = ({
       <button type="submit">login</button>
     </form>
   );
+};
+
+Login.propTypes = {
+  username: PropTypes.string.isRequired,
+  setUsername: PropTypes.func.isRequired,
+  password: PropTypes.string.isRequired,
+  setPassword: PropTypes.func.isRequired,
+  handleLogin: PropTypes.func.isRequired,
 };
 
 export default Login;

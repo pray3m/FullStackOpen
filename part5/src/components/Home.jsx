@@ -3,6 +3,7 @@ import Blog from "./Blog";
 import BlogForm from "./BlogForm";
 import blogService from "../services/blogs";
 import Togglable from "./Togglable";
+import PropTypes from "prop-types";
 
 const Home = ({ user, setUser, setSuccessMsg, setErrorMsg }) => {
   const [blogs, setBlogs] = useState([]);
@@ -73,6 +74,13 @@ const Home = ({ user, setUser, setSuccessMsg, setErrorMsg }) => {
       ))}
     </div>
   );
+};
+
+Home.propTypes = {
+  user: PropTypes.object.isRequired,
+  setUser: PropTypes.func.isRequired,
+  setSuccessMsg: PropTypes.func.isRequired,
+  setErrorMsg: PropTypes.func.isRequired,
 };
 
 export default Home;
