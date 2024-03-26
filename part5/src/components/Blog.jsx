@@ -1,6 +1,7 @@
 import { useState } from "react";
+import blogService from "../services/blogs";
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, updateLike }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 20,
@@ -14,6 +15,8 @@ const Blog = ({ blog }) => {
 
   const showWhenVisible = { display: visible ? "" : "none" };
 
+  const handleLike = () => updateLike(blog);
+
   return (
     <div style={blogStyle}>
       <h3>
@@ -25,7 +28,7 @@ const Blog = ({ blog }) => {
       <div style={showWhenVisible}>
         <a href={blog.url}>{blog.url}</a>
         <p>
-          Likes : {blog.likes} <button>👍</button>
+          Likes : {blog.likes} <button onClick={handleLike}> 👍</button>
         </p>
         <p> - {blog.author}</p>
       </div>
