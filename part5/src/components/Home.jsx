@@ -68,6 +68,7 @@ const Home = ({ user, setUser, setSuccessMsg, setErrorMsg }) => {
           blog={blog}
           updateLike={updateLike}
           deleteBlog={deleteBlog}
+          user={user}
         />
       ))}
     </div>
