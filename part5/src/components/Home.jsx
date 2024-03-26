@@ -30,6 +30,19 @@ const Home = ({ user, setUser, setSuccessMsg, setErrorMsg }) => {
     }
   };
 
+  const deleteBlog = async (blog) => {
+    const confirm = window.confirm(
+      `Remove blog ${blog.title} by ${blog.author}`
+    );
+    if (!confirm) return;
+    try {
+      await blogService.remove(blog.id);
+      setBlogs(blogs.filter((b) => b.id !== blog.id));
+    } catch (ex) {
+      console.log("error", ex);
+    }
+  };
+
   const sortByLikes = (blogs) => {
     return blogs.sort((a, b) => b.likes - a.likes);
   };
@@ -50,7 +63,12 @@ const Home = ({ user, setUser, setSuccessMsg, setErrorMsg }) => {
         />
       </Togglable>
       {sortByLikes(blogs).map((blog) => (
-        <Blog key={blog.id} blog={blog} updateLike={updateLike} />
+        <Blog
+          key={blog.id}
+          blog={blog}
+          updateLike={updateLike}
+          deleteBlog={deleteBlog}
+        />
       ))}
     </div>
   );

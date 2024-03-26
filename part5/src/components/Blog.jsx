@@ -1,9 +1,10 @@
 import { useState } from "react";
 import blogService from "../services/blogs";
 
-const Blog = ({ blog, updateLike }) => {
+const Blog = ({ blog, updateLike, deleteBlog }) => {
   const blogStyle = {
     paddingTop: 10,
+    paddingBottom: 20,
     paddingLeft: 20,
     border: "solid",
     borderWidth: 1,
@@ -17,10 +18,12 @@ const Blog = ({ blog, updateLike }) => {
 
   const handleLike = () => updateLike(blog);
 
+  const handleRemove = () => deleteBlog(blog);
+
   return (
     <div style={blogStyle}>
       <h3>
-        {blog.title}{" "}
+        {blog.title} - {blog.author}{" "}
         <button onClick={() => setVisible(!visible)}>
           {visible ? "hide" : "view"}
         </button>
@@ -30,7 +33,8 @@ const Blog = ({ blog, updateLike }) => {
         <p>
           Likes : {blog.likes} <button onClick={handleLike}> 👍</button>
         </p>
-        <p> - {blog.author}</p>
+        <p> added by: {blog?.user?.name} </p>
+        <button onClick={handleRemove}>remove</button>
       </div>
     </div>
   );

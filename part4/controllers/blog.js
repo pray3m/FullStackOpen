@@ -36,7 +36,7 @@ blogsRouter.post("/", userExtractor, async (req, res, next) => {
       author,
       url,
       likes: likes || 0,
-      user: user._id,
+      user: user,
     });
 
     const savedBlog = await blog.save();
@@ -82,12 +82,13 @@ blogsRouter.put("/:id", userExtractor, async (req, res, next) => {
         author,
         url,
         likes,
-        user: user._id,
+        user: user,
       },
       {
         new: true,
         runValidators: true,
         context: "query",
+        populate: "user",
       }
     );
 
