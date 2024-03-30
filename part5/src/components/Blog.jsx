@@ -30,7 +30,10 @@ const Blog = ({ blog, updateLike, deleteBlog, user }) => {
         <div className="hidden-content">
           <a href={blog.url}>{blog.url}</a>
           <p>
-            Likes : {blog.likes} <button onClick={handleLike}> 👍</button>
+            Likes : {blog.likes}{" "}
+            <button onClick={handleLike} data-testid="like-btn">
+              👍
+            </button>
           </p>
           <p> added by: {blog?.user?.name} </p>
           {user.username === blog?.user?.username && (

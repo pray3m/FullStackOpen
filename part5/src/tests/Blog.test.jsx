@@ -5,7 +5,7 @@ import Blog from "../components/Blog";
 
 // Make a test, which checks that the component displaying a blog renders the blog's title and author, but does not render its URL or number of likes by default.
 
-describe("Blog component", () => {
+describe("Blog", () => {
   const blog = {
     title: "Test Blog Title",
     author: "Test Author",
@@ -17,11 +17,9 @@ describe("Blog component", () => {
     },
   };
 
-  beforeEach(() => {
-    render(<Blog blog={blog} user={blog.user} />);
-  });
-
   test("should display the blog's title and author", () => {
+    render(<Blog blog={blog} user={blog.user} />);
+
     const title = screen.getByText(/test blog title/i);
     const author = screen.getByText(/test author/i);
 
@@ -35,6 +33,8 @@ describe("Blog component", () => {
   });
 
   test("should display the blog's URL and number of likes when the view button is clicked", async () => {
+    render(<Blog blog={blog} user={blog.user} />);
+
     const user = userEvent.setup();
     const viewButton = screen.getByRole("button", { name: /view/i });
     await user.click(viewButton);
@@ -43,5 +43,19 @@ describe("Blog component", () => {
     const likesElement = screen.getByText(/likes/i);
     expect(urlElement).toBeInTheDocument();
     expect(likesElement).toBeInTheDocument();
+  });
+
+  test("should call the event handler twice when the like button is clicked twice", async () => {
+    const mockHandler = vi.fn();
+    render(<Blog blog={blog} user={blog.user} updateLike={mockHandler} />);
+
+    const viewButton = screen.getByRole("button", { name: /view/i });
+    await userEvent.click(viewButton);
+
+    const likeButton = screen.getByTestId("like-btn");
+    await userEvent.click(likeButton);
+    await userEvent.click(likeButton);
+
+    expect(mockHandler).toHaveBeenCalledTimes(2);
   });
 });
