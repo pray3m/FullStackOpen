@@ -18,6 +18,9 @@ const Home = ({ user, setUser, setSuccessMsg, setErrorMsg }) => {
   };
 
   const blogFormRef = useRef();
+  const toggleVisibility = () => {
+    blogFormRef.current.toggleVisibility();
+  };
 
   const updateLike = async (blog) => {
     try {
@@ -60,7 +63,7 @@ const Home = ({ user, setUser, setSuccessMsg, setErrorMsg }) => {
           setBlogs={setBlogs}
           setErrorMsg={setErrorMsg}
           setSuccessMsg={setSuccessMsg}
-          blogFormRef={blogFormRef}
+          toggleVisibility={toggleVisibility}
         />
       </Togglable>
       {sortByLikes(blogs).map((blog) => (

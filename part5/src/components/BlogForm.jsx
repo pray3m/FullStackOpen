@@ -7,7 +7,7 @@ const BlogForm = ({
   setBlogs,
   setSuccessMsg,
   setErrorMsg,
-  blogFormRef,
+  toggleVisibility,
 }) => {
   const [blog, setBlog] = useState({
     title: "",
@@ -17,7 +17,6 @@ const BlogForm = ({
 
   const addBlog = async (e) => {
     e.preventDefault();
-    blogFormRef.current.toggleVisibility();
     try {
       const savedBlog = await blogService.create(blog);
       setBlogs(blogs.concat(savedBlog));
@@ -27,6 +26,7 @@ const BlogForm = ({
       setTimeout(() => {
         setSuccessMsg(null);
       }, 4000);
+      toggleVisibility();
     } catch (error) {
       setErrorMsg(error);
       setTimeout(() => {
@@ -45,28 +45,28 @@ const BlogForm = ({
   return (
     <form onSubmit={addBlog}>
       <h2>create new</h2>
-      title:
       <input
         type="text"
         name="title"
         value={blog.title}
         onChange={handleInputChange}
+        placeholder="title"
       />
       <br />
-      author:
       <input
         type="text"
         name="author"
         value={blog.author}
         onChange={handleInputChange}
+        placeholder="author"
       />
       <br />
-      url:
       <input
         type="text"
         name="url"
         value={blog.url}
         onChange={handleInputChange}
+        placeholder="url"
       />
       <br />
       <input type="submit" value="create" />
@@ -77,10 +77,10 @@ const BlogForm = ({
 
 BlogForm.propTypes = {
   blogs: PropTypes.array.isRequired,
-  setBlogs: PropTypes.func.isRequired,
-  setSuccessMsg: PropTypes.func.isRequired,
-  setErrorMsg: PropTypes.func.isRequired,
-  blogFormRef: PropTypes.object.isRequired,
+  setBlogs: PropTypes.func,
+  setSuccessMsg: PropTypes.func,
+  setErrorMsg: PropTypes.func,
+  toggleVisibility: PropTypes.func,
 };
 
 export default BlogForm;
