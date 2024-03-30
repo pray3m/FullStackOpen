@@ -14,8 +14,6 @@ const Blog = ({ blog, updateLike, deleteBlog, user }) => {
 
   const [visible, setVisible] = useState(false);
 
-  const showWhenVisible = { display: visible ? "" : "none" };
-
   const handleLike = () => updateLike(blog);
 
   const handleRemove = () => deleteBlog(blog);
@@ -23,30 +21,32 @@ const Blog = ({ blog, updateLike, deleteBlog, user }) => {
   return (
     <div style={blogStyle}>
       <h3>
-        {blog.title} - {blog.author}{" "}
+        {blog.title} - {blog.author}
         <button onClick={() => setVisible(!visible)}>
           {visible ? "hide" : "view"}
         </button>
       </h3>
-      <div style={showWhenVisible}>
-        <a href={blog.url}>{blog.url}</a>
-        <p>
-          Likes : {blog.likes} <button onClick={handleLike}> 👍</button>
-        </p>
-        <p> added by: {blog?.user?.name} </p>
-        {user.username === blog?.user?.username && (
-          <button onClick={handleRemove}>remove</button>
-        )}
-      </div>
+      {visible && (
+        <div className="hidden-content">
+          <a href={blog.url}>{blog.url}</a>
+          <p>
+            Likes : {blog.likes} <button onClick={handleLike}> 👍</button>
+          </p>
+          <p> added by: {blog?.user?.name} </p>
+          {user.username === blog?.user?.username && (
+            <button onClick={handleRemove}>remove</button>
+          )}
+        </div>
+      )}
     </div>
   );
 };
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  updateLike: PropTypes.func.isRequired,
-  deleteBlog: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired,
+  updateLike: PropTypes.func,
+  deleteBlog: PropTypes.func,
+  user: PropTypes.object,
 };
 
 export default Blog;
