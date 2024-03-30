@@ -33,4 +33,15 @@ describe("Blog component", () => {
     expect(urlElement).toBeNull();
     expect(likesElement).toBeNull();
   });
+
+  test("should display the blog's URL and number of likes when the view button is clicked", async () => {
+    const user = userEvent.setup();
+    const viewButton = screen.getByRole("button", { name: /view/i });
+    await user.click(viewButton);
+
+    const urlElement = screen.getByRole("link");
+    const likesElement = screen.getByText(/likes/i);
+    expect(urlElement).toBeInTheDocument();
+    expect(likesElement).toBeInTheDocument();
+  });
 });
