@@ -22,6 +22,27 @@ const Home = ({ user, setUser, setSuccessMsg, setErrorMsg }) => {
     blogFormRef.current.toggleVisibility();
   };
 
+  const createBlog = async (blog) => {
+    try {
+      const savedBlog = await blogService.create(blog);
+      setBlogs(blogs.concat(savedBlog));
+      setSuccessMsg(
+        `a new blog ${savedBlog.title} by ${savedBlog.author} added!`
+      );
+      setTimeout(() => {
+        setSuccessMsg(null);
+      }, 4000);
+      toggleVisibility();
+    } catch (error) {
+      console.log(error);
+      setErrorMsg("Failed to add blog");
+      setTimeout(() => {
+        setErrorMsg(null);
+      }, 4000);
+      console.log(error);
+    }
+  };
+
   const updateLike = async (blog) => {
     try {
       const updatedBlog = await blogService.update(blog.id, {
@@ -63,7 +84,7 @@ const Home = ({ user, setUser, setSuccessMsg, setErrorMsg }) => {
           setBlogs={setBlogs}
           setErrorMsg={setErrorMsg}
           setSuccessMsg={setSuccessMsg}
-          toggleVisibility={toggleVisibility}
+          createBlog={createBlog}
         />
       </Togglable>
       {sortByLikes(blogs).map((blog) => (
