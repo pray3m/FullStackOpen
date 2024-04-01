@@ -23,4 +23,20 @@ describe("Note app", () => {
       page.getByRole("heading", { name: "Login to the Blogger" })
     ).toBeVisible();
   });
+
+  describe("Login", () => {
+    test("succeeds with correct credentials", async ({ page }) => {
+      await page.fill('[data-testid="username"]', "pray3m");
+      await page.fill('[data-testid="password"]', "password");
+      await page.getByRole("button", { name: "login" }).click();
+      await expect(page.getByText("Prem Gautam is logged in")).toBeVisible();
+    });
+
+    test("fails with wrong credentials", async ({ page }) => {
+      await page.fill('[data-testid="username"]', "pray3m");
+      await page.fill('[data-testid="password"]', "wrong");
+      await page.getByRole("button", { name: "login" }).click();
+      await expect(page.getByText("something went wrong")).toBeVisible();
+    });
+  });
 });
