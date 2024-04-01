@@ -8,8 +8,8 @@ const Login = ({
   handleLogin,
 }) => {
   return (
-    <form onSubmit={handleLogin}>
-      <h2>Login to the Blogger </h2>
+    <form onSubmit={handleLogin} data-testid="login-form">
+      <h2>Login to the Blogger</h2>
       <div>
         username
         <input
