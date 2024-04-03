@@ -5,13 +5,17 @@
   "main": "index.js",
   "scripts": {
     "test": "playwright test",
-    "test:report": "playwright show-report"
+    "test:report": "playwright show-report",
+    "start:client": "cd ../bloglist-frontend && npm run dev",
+    "start:server": "cd ../../part4 && npm run start:test",
+    "start:test": "concurrently \"npm run start:client\" \"npm run start:server\" "
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.42.1",
-    "@types/node": "^20.12.2"
+    "@types/node": "^20.12.2",
+    "concurrently": "^8.2.2"
   }
 }
