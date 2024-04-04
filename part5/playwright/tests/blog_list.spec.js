@@ -69,5 +69,28 @@ describe("Note app", () => {
       await page.getByTestId("like-btn").click();
       await expect(page.getByText("Likes : 1")).toBeVisible();
     });
+
+    test.only("a blog can be deleted by the user who added it", async ({
+      page,
+    }) => {
+      const blog = {
+        title: "new blog",
+        author: "test author",
+        url: "test-url",
+      };
+
+      await createBlog(page, blog);
+      await page.getByRole("button", { name: "view" }).click();
+
+      await page.on("dialog", async (dialog) => {
+        expect(dialog.message()).toContain(
+          "Remove blog new blog by test author"
+        );
+        await dialog.accept();
+      });
+      await page.getByRole("button", { name: "remove" }).click();
+
+      await expect(page.getByText("new blog - test")).not.toBeVisible();
+    });
   });
 });
