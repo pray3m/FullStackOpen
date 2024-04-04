@@ -92,7 +92,7 @@ describe("Note app", () => {
     });
 
     // Make a test that ensures that only the user who added the blog sees the blog's delete button.
-    test.only("only the user who added the blog can delete it", async ({
+    test("only the user who added the blog can delete it", async ({
       page,
       request,
     }) => {
@@ -122,6 +122,48 @@ describe("Note app", () => {
       await expect(
         page.getByRole("button", { name: "remove" })
       ).not.toBeVisible();
+    });
+
+    // Do a test that ensures that the blogs are arranged in the order according to the likes, the blog with the most likes first.
+    test.only("blogs are arranged in the order according to the likes", async ({
+      page,
+      request,
+    }) => {
+      const blogs = [
+        { title: "Blog 1", author: "Author 1", url: "url1", likes: 5 },
+        { title: "Blog 2", author: "Author 2", url: "url2", likes: 15 },
+        { title: "Blog 3", author: "Author 3", url: "url3", likes: 10 },
+      ];
+
+      const token = await page
+        .evaluate(() => localStorage.getItem("loggedUser"))
+        .then((userString) => userString && JSON.parse(userString).token);
+
+      for (const blog of blogs) {
+        await request.post("/api/blogs", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          data: blog,
+        });
+      }
+
+      await page.reload();
+      await page.waitForTimeout(3000);
+
+      const blogTitles = await page.evaluate(() =>
+        Array.from(document.querySelectorAll("#blog-title")).map((el) => {
+          const titleText = el.textContent.trim();
+          return titleText.split(" - ")[0] || titleText; // handle titles with/without author info
+        })
+      );
+
+      expect(blogTitles.length).toBe(blogs.length);
+
+      const sortedBlogTitles = blogs
+        .sort((a, b) => b.likes - a.likes)
+        .map((b) => b.title);
+      expect(blogTitles).toEqual(sortedBlogTitles);
     });
   });
 });
