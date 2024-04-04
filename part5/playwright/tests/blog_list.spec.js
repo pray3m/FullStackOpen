@@ -70,9 +70,7 @@ describe("Note app", () => {
       await expect(page.getByText("Likes : 1")).toBeVisible();
     });
 
-    test.only("a blog can be deleted by the user who added it", async ({
-      page,
-    }) => {
+    test("a blog can be deleted by the user who added it", async ({ page }) => {
       const blog = {
         title: "new blog",
         author: "test author",
@@ -91,6 +89,39 @@ describe("Note app", () => {
       await page.getByRole("button", { name: "remove" }).click();
 
       await expect(page.getByText("new blog - test")).not.toBeVisible();
+    });
+
+    // Make a test that ensures that only the user who added the blog sees the blog's delete button.
+    test.only("only the user who added the blog can delete it", async ({
+      page,
+      request,
+    }) => {
+      await request.post("/api/users", {
+        data: {
+          name: "Another user",
+          username: "newuser",
+          password: "sekret",
+        },
+      });
+
+      const blog = {
+        title: "new blog",
+        author: "test author",
+        url: "test-url",
+      };
+
+      await createBlog(page, blog);
+      await page.getByRole("button", { name: "view" }).click();
+      await expect(page.getByRole("button", { name: "remove" })).toBeVisible();
+
+      await page.click("button:has-text('logout')");
+
+      await loginWith(page, "newuser", "sekret");
+      await page.getByRole("button", { name: "view" }).click();
+
+      await expect(
+        page.getByRole("button", { name: "remove" })
+      ).not.toBeVisible();
     });
   });
 });
