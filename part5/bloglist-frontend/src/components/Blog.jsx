@@ -21,7 +21,9 @@ const Blog = ({ blog, updateLike, deleteBlog, user }) => {
   return (
     <div style={blogStyle}>
       <h3>
-        <p>{blog.title} - {blog.author}</p>
+        <p>
+          {blog.title} - {blog.author}
+        </p>
         <button onClick={() => setVisible(!visible)}>
           {visible ? "hide" : "view"}
         </button>
@@ -30,7 +32,7 @@ const Blog = ({ blog, updateLike, deleteBlog, user }) => {
         <div className="hidden-content">
           <a href={blog.url}>{blog.url}</a>
           <p>
-            Likes : {blog.likes}{" "}
+            Likes : {blog.likes}
             <button onClick={handleLike} data-testid="like-btn">
               👍
             </button>

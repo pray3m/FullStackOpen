@@ -44,18 +44,30 @@ describe("Note app", () => {
       await loginWith(page, "pray3m", "password");
     });
 
-    const blog = {
-      title: "created by playwright",
-      author: "test author",
-      url: "test-url",
-    };
-
     test("a new blog can be created", async ({ page }) => {
+      const blog = {
+        title: "created by playwright",
+        author: "test author",
+        url: "test-url",
+      };
       await createBlog(page, blog);
 
       await expect(
         page.getByText("created by playwright - test")
       ).toBeVisible();
+    });
+
+    test("a blog can be liked", async ({ page }) => {
+      const blog = {
+        title: "new blog",
+        author: "test author",
+        url: "test-url",
+      };
+      await createBlog(page, blog);
+
+      await page.getByRole("button", { name: "view" }).click();
+      await page.getByTestId("like-btn").click();
+      await expect(page.getByText("Likes : 1")).toBeVisible();
     });
   });
 });
