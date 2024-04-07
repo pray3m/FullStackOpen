@@ -36,7 +36,6 @@ const AnecdoteList = () => {
             <button onClick={() => vote(anecdote.id, anecdote.content)}>
               vote
             </button>
-            ß
           </div>
         </div>
       ))}
