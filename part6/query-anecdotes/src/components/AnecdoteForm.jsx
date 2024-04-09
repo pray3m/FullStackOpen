@@ -13,7 +13,7 @@ const AnecdoteForm = () => {
       queryClient.invalidateQueries("anecdotes");
     },
     onError: (error) => {
-      console.log(error);
+      showNotification(`Error: '${error.response.data.error}'`, 5000)(dispatch);
     },
   });
 
