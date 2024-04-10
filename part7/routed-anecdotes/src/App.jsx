@@ -1,13 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-import {
-  Link,
-  Route,
-  BrowserRouter as Router,
-  Routes,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
+import { Link, Route, Routes, useMatch, useNavigate } from "react-router-dom";
 
 const Menu = () => {
   const padding = {
@@ -41,10 +34,7 @@ const AnecdoteList = ({ anecdotes }) => (
   </div>
 );
 
-const Anecdote = ({ anecdotes }) => {
-  const id = useParams().id;
-  const anecdote = anecdotes.find((a) => a.id === Number(id));
-
+const Anecdote = ({ anecdote }) => {
   return (
     <div>
       <h2>
@@ -185,30 +175,33 @@ const App = () => {
     setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
   };
 
+  const match = useMatch("/anecdotes/:id");
+  const anecdote = match
+    ? anecdotes.find((a) => a.id === Number(match.params.id))
+    : null;
+
   return (
-    <Router>
-      <div>
-        <h1>Software anecdotes</h1>
-        {notification && (
-          <p style={{ border: "2px solid gold", padding: "8px" }}>
-            {notification}
-          </p>
-        )}
-        <Menu />
+    <div>
+      <h1>Software anecdotes</h1>
+      {notification && (
+        <p style={{ border: "2px solid gold", padding: "8px" }}>
+          {notification}
+        </p>
+      )}
+      <Menu />
 
-        <Routes>
-          <Route
-            path="anecdotes/:id"
-            element={<Anecdote anecdotes={anecdotes} />}
-          />
-          <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/create" element={<CreateNew addNew={addNew} />} />
-        </Routes>
+      <Routes>
+        <Route
+          path="anecdotes/:id"
+          element={<Anecdote anecdote={anecdote} />}
+        />
+        <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/create" element={<CreateNew addNew={addNew} />} />
+      </Routes>
 
-        <Footer />
-      </div>
-    </Router>
+      <Footer />
+    </div>
   );
 };
 
