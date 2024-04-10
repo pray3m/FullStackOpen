@@ -5,6 +5,7 @@ import {
   Route,
   BrowserRouter as Router,
   Routes,
+  useNavigate,
   useParams,
 } from "react-router-dom";
 
@@ -91,6 +92,7 @@ const Footer = () => (
 );
 
 const CreateNew = (props) => {
+  const navigate = useNavigate();
   const [content, setContent] = useState("");
   const [author, setAuthor] = useState("");
   const [info, setInfo] = useState("");
@@ -103,6 +105,8 @@ const CreateNew = (props) => {
       info,
       votes: 0,
     });
+
+    navigate("/");
   };
 
   return (
@@ -162,6 +166,10 @@ const App = () => {
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000);
     setAnecdotes(anecdotes.concat(anecdote));
+    setNotification(`you added '${anecdote.content}'`);
+    setTimeout(() => {
+      setNotification("");
+    }, 5000);
   };
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
@@ -181,6 +189,11 @@ const App = () => {
     <Router>
       <div>
         <h1>Software anecdotes</h1>
+        {notification && (
+          <p style={{ border: "2px solid gold", padding: "8px" }}>
+            {notification}
+          </p>
+        )}
         <Menu />
 
         <Routes>
