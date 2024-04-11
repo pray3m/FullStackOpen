@@ -1,36 +1,30 @@
 import PropTypes from "prop-types";
 
-const Login = ({
-  username,
-  setUsername,
-  password,
-  setPassword,
-  handleLogin,
-}) => {
+const Login = ({ username, setUsername, password, setPassword, handleLogin }) => {
   return (
-    <form onSubmit={handleLogin} data-testid="login-form">
+    <form onSubmit={handleLogin} data-testid='login-form'>
       <h2>Login to the Blogger</h2>
       <div>
         username
         <input
-          data-testid="username"
-          type="text"
+          data-testid='username'
+          type='text'
           value={username}
-          name="Username"
+          name='Username'
           onChange={(e) => setUsername(e.target.value)}
         />
       </div>
       <div>
         password
         <input
-          data-testid="password"
-          type="password"
+          data-testid='password'
+          type='password'
           value={password}
-          name="Password"
+          name='Password'
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-      <button type="submit">login</button>
+      <button type='submit'>login</button>
     </form>
   );
 };

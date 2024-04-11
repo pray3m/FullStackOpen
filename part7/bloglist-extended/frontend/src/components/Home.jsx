@@ -26,9 +26,7 @@ const Home = ({ user, setUser, setSuccessMsg, setErrorMsg }) => {
     try {
       const savedBlog = await blogService.create(blog);
       setBlogs(blogs.concat(savedBlog));
-      setSuccessMsg(
-        `a new blog ${savedBlog.title} by ${savedBlog.author} added!`
-      );
+      setSuccessMsg(`a new blog ${savedBlog.title} by ${savedBlog.author} added!`);
       setTimeout(() => {
         setSuccessMsg(null);
       }, 4000);
@@ -56,9 +54,7 @@ const Home = ({ user, setUser, setSuccessMsg, setErrorMsg }) => {
   };
 
   const deleteBlog = async (blog) => {
-    const confirm = window.confirm(
-      `Remove blog ${blog.title} by ${blog.author}`
-    );
+    const confirm = window.confirm(`Remove blog ${blog.title} by ${blog.author}`);
     if (!confirm) return;
     try {
       await blogService.remove(blog.id);
@@ -79,7 +75,7 @@ const Home = ({ user, setUser, setSuccessMsg, setErrorMsg }) => {
         <span>{user?.name} is logged in</span>
         <button onClick={handleLogout}>logout</button>
       </p>
-      <Togglable buttonLabel="new blog" ref={blogFormRef}>
+      <Togglable buttonLabel='new blog' ref={blogFormRef}>
         <BlogForm
           blogs={blogs}
           setBlogs={setBlogs}
