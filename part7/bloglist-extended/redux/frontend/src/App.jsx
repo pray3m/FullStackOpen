@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import "./App.css";
 import Home from "./components/Home";
 import Login from "./components/Login";
@@ -7,11 +7,12 @@ import Notification from "./components/Notification";
 import { showNotification } from "./reducers/notificationReducer";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import { setUser } from "./reducers/authReducer";
 
 const App = () => {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
 
-  const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -21,8 +22,8 @@ const App = () => {
 
     const user = JSON.parse(loggedUser);
     blogService.setToken(user.token);
-    setUser(user);
-  }, []);
+    dispatch(setUser(user));
+  }, [dispatch]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -31,7 +32,7 @@ const App = () => {
       const user = await loginService.login({ username, password });
       window.localStorage.setItem("loggedUser", JSON.stringify(user));
       blogService.setToken(user.token);
-      setUser(user);
+      dispatch(setUser(user));
     } catch (ex) {
       dispatch(showNotification("something went wrong", 5));
     }
@@ -42,9 +43,8 @@ const App = () => {
   return (
     <div>
       <Notification />
-      {user === null ? (
+      {!user.username ? (
         <Login
-          setUser={setUser}
           username={username}
           password={password}
           setUsername={setUsername}
@@ -52,7 +52,7 @@ const App = () => {
           handleLogin={handleLogin}
         />
       ) : (
-        <Home user={user} setUser={setUser} />
+        <Home />
       )}
     </div>
   );
