@@ -1,11 +1,12 @@
-import PropTypes from "prop-types";
+import { useContext } from "react";
+import NotificationContext from "../NotificationContext";
 
-const Notification = ({ successMsg, errorMsg }) => {
-  if (successMsg === null && errorMsg === null) return null;
+const Notification = () => {
+  const [notification, dispatch] = useContext(NotificationContext);
+
+  if (notification === null) return null;
 
   const messageStyles = {
-    color: successMsg ? "green" : "red",
-    background: "lightgrey",
     fontSize: "20px",
     borderStyle: "solid",
     borderRadius: "5px",
@@ -13,12 +14,7 @@ const Notification = ({ successMsg, errorMsg }) => {
     marginBottom: "10px",
   };
 
-  return <p style={messageStyles}>{successMsg || errorMsg}</p>;
-};
-
-Notification.propTypes = {
-  successMsg: PropTypes.string,
-  errorMsg: PropTypes.string,
+  return <p style={messageStyles}>{notification}</p>;
 };
 
 export default Notification;

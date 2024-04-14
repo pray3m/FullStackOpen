@@ -1,18 +1,18 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./App.css";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import NotificationContext, { showNotification } from "./NotificationContext";
 
 const App = () => {
+  const [, dispatch] = useContext(NotificationContext);
+
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
-  const [successMsg, setSuccessMsg] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
 
   useEffect(() => {
     const loggedUser = window.localStorage.getItem("loggedUser");
@@ -32,11 +32,7 @@ const App = () => {
       blogService.setToken(user.token);
       setUser(user);
     } catch (ex) {
-      if (ex.response.data) setErrorMsg(ex.response.data.error);
-      setErrorMsg("something went wrong");
-      setTimeout(() => {
-        setErrorMsg(null);
-      }, 4000);
+      showNotification("login failed", 5)(dispatch);
     }
     setUsername("");
     setPassword("");
@@ -44,7 +40,7 @@ const App = () => {
 
   return (
     <div>
-      <Notification errorMsg={errorMsg} successMsg={successMsg} />
+      <Notification />
       {user === null ? (
         <Login
           setUser={setUser}
@@ -55,12 +51,7 @@ const App = () => {
           handleLogin={handleLogin}
         />
       ) : (
-        <Home
-          user={user}
-          setUser={setUser}
-          setErrorMsg={setErrorMsg}
-          setSuccessMsg={setSuccessMsg}
-        />
+        <Home user={user} setUser={setUser} />
       )}
     </div>
   );

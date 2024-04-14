@@ -1,11 +1,13 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import Blog from "./Blog";
 import BlogForm from "./BlogForm";
 import blogService from "../services/blogs";
 import Togglable from "./Togglable";
 import PropTypes from "prop-types";
+import NotificationContext, { showNotification } from "../NotificationContext";
 
-const Home = ({ user, setUser, setSuccessMsg, setErrorMsg }) => {
+const Home = ({ user, setUser }) => {
+  const [, dispatch] = useContext(NotificationContext);
   const [blogs, setBlogs] = useState([]);
 
   useEffect(() => {
@@ -26,17 +28,10 @@ const Home = ({ user, setUser, setSuccessMsg, setErrorMsg }) => {
     try {
       const savedBlog = await blogService.create(blog);
       setBlogs(blogs.concat(savedBlog));
-      setSuccessMsg(`a new blog ${savedBlog.title} by ${savedBlog.author} added!`);
-      setTimeout(() => {
-        setSuccessMsg(null);
-      }, 4000);
+      showNotification(`a new blog ${savedBlog.title} by ${savedBlog.author} added!`, 5)(dispatch);
       toggleVisibility();
     } catch (error) {
-      console.log(error);
-      setErrorMsg("Failed to add blog");
-      setTimeout(() => {
-        setErrorMsg(null);
-      }, 4000);
+      showNotification("failed to add blog", 5)(dispatch);
       console.log(error);
     }
   };
@@ -76,13 +71,7 @@ const Home = ({ user, setUser, setSuccessMsg, setErrorMsg }) => {
         <button onClick={handleLogout}>logout</button>
       </p>
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
-        <BlogForm
-          blogs={blogs}
-          setBlogs={setBlogs}
-          setErrorMsg={setErrorMsg}
-          setSuccessMsg={setSuccessMsg}
-          createBlog={createBlog}
-        />
+        <BlogForm blogs={blogs} setBlogs={setBlogs} createBlog={createBlog} />
       </Togglable>
       {sortByLikes(blogs).map((blog) => (
         <Blog
@@ -100,8 +89,6 @@ const Home = ({ user, setUser, setSuccessMsg, setErrorMsg }) => {
 Home.propTypes = {
   user: PropTypes.object.isRequired,
   setUser: PropTypes.func.isRequired,
-  setSuccessMsg: PropTypes.func.isRequired,
-  setErrorMsg: PropTypes.func.isRequired,
 };
 
 export default Home;
