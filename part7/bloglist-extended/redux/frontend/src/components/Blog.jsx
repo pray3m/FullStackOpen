@@ -1,7 +1,11 @@
-import { useState } from "react";
 import PropTypes from "prop-types";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { likeBlog, removeBlog } from "../reducers/blogReducer";
 
-const Blog = ({ blog, updateLike, deleteBlog, user }) => {
+const Blog = ({ blog, user }) => {
+  const dispatch = useDispatch();
+
   const blogStyle = {
     paddingTop: 10,
     paddingBottom: 20,
@@ -14,9 +18,19 @@ const Blog = ({ blog, updateLike, deleteBlog, user }) => {
 
   const [visible, setVisible] = useState(false);
 
-  const handleLike = () => updateLike(blog);
+  const handleLike = () => {
+    dispatch(likeBlog(blog));
+  };
 
-  const handleRemove = () => deleteBlog(blog);
+  const handleRemove = () => {
+    const confirm = window.confirm(`Remove blog ${blog.title} by ${blog.author}`);
+    if (!confirm) return;
+    try {
+      dispatch(removeBlog(blog.id));
+    } catch (ex) {
+      console.log("error", ex);
+    }
+  };
 
   return (
     <div style={blogStyle}>
@@ -45,8 +59,6 @@ const Blog = ({ blog, updateLike, deleteBlog, user }) => {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  updateLike: PropTypes.func,
-  deleteBlog: PropTypes.func,
   user: PropTypes.object,
 };
 

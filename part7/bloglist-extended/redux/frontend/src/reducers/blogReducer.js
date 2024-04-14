@@ -35,7 +35,22 @@ export const initializeBlogs = () => {
 export const createBlog = (newBlog) => {
   return async (dispatch) => {
     const savedBlog = await blogService.create(newBlog);
-    dispatch(appendBlog(savedBlog));
+    if (savedBlog) dispatch(appendBlog(savedBlog));
+  };
+};
+
+export const likeBlog = (blog) => {
+  return async (dispatch) => {
+    const updatedBlog = { ...blog, likes: blog.likes + 1 };
+    const res = await blogService.update(blog.id, updatedBlog);
+    dispatch(updateLike(res));
+  };
+};
+
+export const removeBlog = (id) => {
+  return async (dispatch) => {
+    await blogService.remove(id);
+    dispatch(deleteBlog(id));
   };
 };
 

@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { initializeBlogs } from "../reducers/blogReducer";
+import { initializeBlogs, removeBlog } from "../reducers/blogReducer";
 import blogService from "../services/blogs";
 import Blog from "./Blog";
 import BlogForm from "./BlogForm";
@@ -27,29 +27,6 @@ const Home = ({ user, setUser }) => {
     blogFormRef.current.toggleVisibility();
   };
 
-  const updateLike = async (blog) => {
-    try {
-      const updatedBlog = await blogService.update(blog.id, {
-        ...blog,
-        likes: blog.likes + 1,
-      });
-      // setBlogs(blogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b)));
-    } catch (ex) {
-      console.log("error", ex);
-    }
-  };
-
-  const deleteBlog = async (blog) => {
-    const confirm = window.confirm(`Remove blog ${blog.title} by ${blog.author}`);
-    if (!confirm) return;
-    try {
-      await blogService.remove(blog.id);
-      // setBlogs(blogs.filter((b) => b.id !== blog.id));
-    } catch (ex) {
-      console.log("error", ex);
-    }
-  };
-
   if (blogs.length === 0) return null;
 
   const sortByLikes = (blogs) => {
@@ -67,13 +44,7 @@ const Home = ({ user, setUser }) => {
         <BlogForm toggleVisibility={toggleVisibility} />
       </Togglable>
       {sortByLikes([...blogs]).map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          updateLike={updateLike}
-          deleteBlog={deleteBlog}
-          user={user}
-        />
+        <Blog key={blog.id} blog={blog} user={user} />
       ))}
     </div>
   );
