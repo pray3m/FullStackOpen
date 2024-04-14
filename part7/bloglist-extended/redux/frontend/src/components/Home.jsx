@@ -1,12 +1,10 @@
-import PropTypes from "prop-types";
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { initializeBlogs, removeBlog } from "../reducers/blogReducer";
-import blogService from "../services/blogs";
+import { logout } from "../reducers/authReducer";
+import { initializeBlogs } from "../reducers/blogReducer";
 import Blog from "./Blog";
 import BlogForm from "./BlogForm";
 import Togglable from "./Togglable";
-import { logout } from "../reducers/authReducer";
 
 const Home = () => {
   const dispatch = useDispatch();

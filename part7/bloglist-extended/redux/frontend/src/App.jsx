@@ -4,10 +4,10 @@ import "./App.css";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Notification from "./components/Notification";
+import { setUser } from "./reducers/authReducer";
 import { showNotification } from "./reducers/notificationReducer";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
-import { setUser } from "./reducers/authReducer";
 
 const App = () => {
   const dispatch = useDispatch();
