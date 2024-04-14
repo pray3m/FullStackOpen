@@ -1,19 +1,21 @@
-import { useState, useEffect, useRef } from "react";
+import PropTypes from "prop-types";
+import { useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { initializeBlogs } from "../reducers/blogReducer";
+import blogService from "../services/blogs";
 import Blog from "./Blog";
 import BlogForm from "./BlogForm";
-import blogService from "../services/blogs";
 import Togglable from "./Togglable";
-import PropTypes from "prop-types";
-import { useDispatch } from "react-redux";
-import { showNotification } from "../reducers/notificationReducer";
 
 const Home = ({ user, setUser }) => {
   const dispatch = useDispatch();
-  const [blogs, setBlogs] = useState([]);
+  const blogs = useSelector((state) => state.blogs);
+
+  console.log("Blogs : ", blogs);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
+    dispatch(initializeBlogs());
+  }, [dispatch]);
 
   const handleLogout = () => {
     window.localStorage.removeItem("loggedUser");
@@ -25,26 +27,13 @@ const Home = ({ user, setUser }) => {
     blogFormRef.current.toggleVisibility();
   };
 
-  const createBlog = async (blog) => {
-    try {
-      const savedBlog = await blogService.create(blog);
-      setBlogs(blogs.concat(savedBlog));
-      dispatch(showNotification(`a new blog ${savedBlog.title} by ${savedBlog.author} added!`, 5));
-      toggleVisibility();
-    } catch (error) {
-      console.log(error);
-      dispatch(showNotification("Failed to add blog", 5));
-      console.log(error);
-    }
-  };
-
   const updateLike = async (blog) => {
     try {
       const updatedBlog = await blogService.update(blog.id, {
         ...blog,
         likes: blog.likes + 1,
       });
-      setBlogs(blogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b)));
+      // setBlogs(blogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b)));
     } catch (ex) {
       console.log("error", ex);
     }
@@ -55,11 +44,13 @@ const Home = ({ user, setUser }) => {
     if (!confirm) return;
     try {
       await blogService.remove(blog.id);
-      setBlogs(blogs.filter((b) => b.id !== blog.id));
+      // setBlogs(blogs.filter((b) => b.id !== blog.id));
     } catch (ex) {
       console.log("error", ex);
     }
   };
+
+  if (blogs.length === 0) return null;
 
   const sortByLikes = (blogs) => {
     return blogs.sort((a, b) => b.likes - a.likes);
@@ -73,9 +64,9 @@ const Home = ({ user, setUser }) => {
         <button onClick={handleLogout}>logout</button>
       </p>
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
-        <BlogForm blogs={blogs} setBlogs={setBlogs} createBlog={createBlog} />
+        <BlogForm toggleVisibility={toggleVisibility} />
       </Togglable>
-      {sortByLikes(blogs).map((blog) => (
+      {sortByLikes([...blogs]).map((blog) => (
         <Blog
           key={blog.id}
           blog={blog}
