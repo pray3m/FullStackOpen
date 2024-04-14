@@ -3,9 +3,9 @@ import "./App.css";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Notification from "./components/Notification";
+import NotificationContext, { showNotification } from "./NotificationContext";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
-import NotificationContext, { showNotification } from "./NotificationContext";
 
 const App = () => {
   const [, dispatch] = useContext(NotificationContext);

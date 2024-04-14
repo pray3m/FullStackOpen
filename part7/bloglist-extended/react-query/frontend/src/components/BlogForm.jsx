@@ -1,12 +1,36 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import NotificationContext, { showNotification } from "../NotificationContext";
+import blogService from "../services/blogs";
 
-const BlogForm = ({ createBlog }) => {
+const BlogForm = ({ toggleVisibility }) => {
   const [blog, setBlog] = useState({
     title: "",
     author: "",
     url: "",
   });
+
+  const queryClient = useQueryClient();
+  const [, dispatch] = useContext(NotificationContext);
+
+  const newBlogMutation = useMutation({
+    mutationFn: blogService.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries("blogs");
+    },
+  });
+
+  const createBlog = async (blog) => {
+    try {
+      newBlogMutation.mutate(blog);
+      showNotification(`a new blog ${blog.title} by ${blog.author} added!`, 5)(dispatch);
+      toggleVisibility();
+    } catch (error) {
+      showNotification("failed to add blog", 5)(dispatch);
+      console.log(error);
+    }
+  };
 
   const addBlog = async (e) => {
     e.preventDefault();
@@ -53,7 +77,7 @@ const BlogForm = ({ createBlog }) => {
 };
 
 BlogForm.propTypes = {
-  createBlog: PropTypes.func.isRequired,
+  toggleVisibility: PropTypes.func.isRequired,
 };
 
 export default BlogForm;

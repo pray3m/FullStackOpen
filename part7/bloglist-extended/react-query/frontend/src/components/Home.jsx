@@ -1,18 +1,34 @@
-import { useState, useEffect, useRef, useContext } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import PropTypes from "prop-types";
+import { useRef } from "react";
+import blogService from "../services/blogs";
 import Blog from "./Blog";
 import BlogForm from "./BlogForm";
-import blogService from "../services/blogs";
 import Togglable from "./Togglable";
-import PropTypes from "prop-types";
-import NotificationContext, { showNotification } from "../NotificationContext";
 
 const Home = ({ user, setUser }) => {
-  const [, dispatch] = useContext(NotificationContext);
-  const [blogs, setBlogs] = useState([]);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
+  const result = useQuery({
+    queryKey: ["blogs"],
+    queryFn: blogService.getAll,
+  });
+
+  const blogs = result.data || [];
+
+  const updateLikeMutation = useMutation({
+    mutationFn: blogService.update,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+    },
+  });
+
+  const deleteBlogMutation = useMutation({
+    mutationFn: blogService.remove,
+    onSuccess: () => {
+      queryClient.invalidateQueries("blogs");
+    },
+  });
 
   const handleLogout = () => {
     window.localStorage.removeItem("loggedUser");
@@ -24,25 +40,10 @@ const Home = ({ user, setUser }) => {
     blogFormRef.current.toggleVisibility();
   };
 
-  const createBlog = async (blog) => {
-    try {
-      const savedBlog = await blogService.create(blog);
-      setBlogs(blogs.concat(savedBlog));
-      showNotification(`a new blog ${savedBlog.title} by ${savedBlog.author} added!`, 5)(dispatch);
-      toggleVisibility();
-    } catch (error) {
-      showNotification("failed to add blog", 5)(dispatch);
-      console.log(error);
-    }
-  };
-
   const updateLike = async (blog) => {
     try {
-      const updatedBlog = await blogService.update(blog.id, {
-        ...blog,
-        likes: blog.likes + 1,
-      });
-      setBlogs(blogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b)));
+      const updatedBlog = { ...blog, likes: blog.likes + 1 };
+      updateLikeMutation.mutate(updatedBlog);
     } catch (ex) {
       console.log("error", ex);
     }
@@ -52,8 +53,7 @@ const Home = ({ user, setUser }) => {
     const confirm = window.confirm(`Remove blog ${blog.title} by ${blog.author}`);
     if (!confirm) return;
     try {
-      await blogService.remove(blog.id);
-      setBlogs(blogs.filter((b) => b.id !== blog.id));
+      deleteBlogMutation.mutate(blog.id);
     } catch (ex) {
       console.log("error", ex);
     }
@@ -71,7 +71,7 @@ const Home = ({ user, setUser }) => {
         <button onClick={handleLogout}>logout</button>
       </p>
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
-        <BlogForm blogs={blogs} setBlogs={setBlogs} createBlog={createBlog} />
+        <BlogForm toggleVisibility={toggleVisibility} />
       </Togglable>
       {sortByLikes(blogs).map((blog) => (
         <Blog
