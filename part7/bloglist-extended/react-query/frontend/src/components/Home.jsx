@@ -1,12 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import PropTypes from "prop-types";
-import { useRef } from "react";
+import { useContext, useRef } from "react";
+import AuthContext from "../AuthContext";
 import blogService from "../services/blogs";
 import Blog from "./Blog";
 import BlogForm from "./BlogForm";
 import Togglable from "./Togglable";
 
-const Home = ({ user, setUser }) => {
+const Home = () => {
+  const [user, dispatchAuth] = useContext(AuthContext);
+
   const result = useQuery({
     queryKey: ["blogs"],
     queryFn: blogService.getAll,
@@ -16,7 +18,7 @@ const Home = ({ user, setUser }) => {
 
   const handleLogout = () => {
     window.localStorage.removeItem("loggedUser");
-    setUser(null);
+    dispatchAuth({ type: "CLEAR_USER" });
   };
 
   const blogFormRef = useRef();
@@ -43,11 +45,6 @@ const Home = ({ user, setUser }) => {
       ))}
     </div>
   );
-};
-
-Home.propTypes = {
-  user: PropTypes.object.isRequired,
-  setUser: PropTypes.func.isRequired,
 };
 
 export default Home;

@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import "./App.css";
+import AuthContext from "./AuthContext";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Notification from "./components/Notification";
@@ -8,9 +9,9 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 
 const App = () => {
-  const [, dispatch] = useContext(NotificationContext);
+  const [, dispatchNotification] = useContext(NotificationContext);
+  const [user, dispatchAuth] = useContext(AuthContext);
 
-  const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -20,8 +21,8 @@ const App = () => {
 
     const user = JSON.parse(loggedUser);
     blogService.setToken(user.token);
-    setUser(user);
-  }, []);
+    dispatchAuth({ type: "SET_USER", data: user });
+  }, [dispatchAuth]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -30,9 +31,9 @@ const App = () => {
       const user = await loginService.login({ username, password });
       window.localStorage.setItem("loggedUser", JSON.stringify(user));
       blogService.setToken(user.token);
-      setUser(user);
+      dispatchAuth({ type: "SET_USER", data: user });
     } catch (ex) {
-      showNotification("login failed", 5)(dispatch);
+      showNotification("login failed", 5)(dispatchNotification);
     }
     setUsername("");
     setPassword("");
@@ -43,7 +44,6 @@ const App = () => {
       <Notification />
       {user === null ? (
         <Login
-          setUser={setUser}
           username={username}
           password={password}
           setUsername={setUsername}
@@ -51,7 +51,7 @@ const App = () => {
           handleLogin={handleLogin}
         />
       ) : (
-        <Home user={user} setUser={setUser} />
+        <Home />
       )}
     </div>
   );
