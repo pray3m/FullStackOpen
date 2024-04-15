@@ -3,10 +3,12 @@ import AuthContext from "../AuthContext";
 import blogService from "../services/blogs";
 import loginService from "../services/login";
 import NotificationContext, { showNotification } from "../NotificationContext";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [, dispatchNotification] = useContext(NotificationContext);
   const [user, dispatchAuth] = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -19,6 +21,7 @@ const Login = () => {
       window.localStorage.setItem("loggedUser", JSON.stringify(user));
       blogService.setToken(user.token);
       dispatchAuth({ type: "SET_USER", data: user });
+      navigate("/");
     } catch (ex) {
       showNotification("login failed", 5)(dispatchNotification);
     }
