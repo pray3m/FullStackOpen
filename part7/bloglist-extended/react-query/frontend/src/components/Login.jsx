@@ -1,6 +1,31 @@
-import PropTypes from "prop-types";
+import { useContext, useState } from "react";
+import AuthContext from "../AuthContext";
+import blogService from "../services/blogs";
+import loginService from "../services/login";
+import NotificationContext, { showNotification } from "../NotificationContext";
 
-const Login = ({ username, setUsername, password, setPassword, handleLogin }) => {
+const Login = () => {
+  const [, dispatchNotification] = useContext(NotificationContext);
+  const [user, dispatchAuth] = useContext(AuthContext);
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      console.log("Logging in with", username, password);
+      const user = await loginService.login({ username, password });
+      window.localStorage.setItem("loggedUser", JSON.stringify(user));
+      blogService.setToken(user.token);
+      dispatchAuth({ type: "SET_USER", data: user });
+    } catch (ex) {
+      showNotification("login failed", 5)(dispatchNotification);
+    }
+    setUsername("");
+    setPassword("");
+  };
+
   return (
     <form onSubmit={handleLogin} data-testid='login-form'>
       <h2>Login to the Blogger</h2>
@@ -27,14 +52,6 @@ const Login = ({ username, setUsername, password, setPassword, handleLogin }) =>
       <button type='submit'>login</button>
     </form>
   );
-};
-
-Login.propTypes = {
-  username: PropTypes.string.isRequired,
-  setUsername: PropTypes.func.isRequired,
-  password: PropTypes.string.isRequired,
-  setPassword: PropTypes.func.isRequired,
-  handleLogin: PropTypes.func.isRequired,
 };
 
 export default Login;

@@ -15,6 +15,7 @@ const Home = () => {
   });
 
   const blogs = result.data || [];
+  console.log(blogs);
 
   const handleLogout = () => {
     window.localStorage.removeItem("loggedUser");
