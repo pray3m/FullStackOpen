@@ -1,7 +1,26 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import blogService from "../services/blogs";
 
-const Blog = ({ blog, updateLike, deleteBlog, user }) => {
+const Blog = ({ blog, user }) => {
+  const [visible, setVisible] = useState(false);
+  const queryClient = useQueryClient();
+
+  const updateLikeMutation = useMutation({
+    mutationFn: blogService.update,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+    },
+  });
+
+  const deleteBlogMutation = useMutation({
+    mutationFn: blogService.remove,
+    onSuccess: () => {
+      queryClient.invalidateQueries("blogs");
+    },
+  });
+
   const blogStyle = {
     paddingTop: 10,
     paddingBottom: 20,
@@ -12,11 +31,17 @@ const Blog = ({ blog, updateLike, deleteBlog, user }) => {
     marginBottom: 5,
   };
 
-  const [visible, setVisible] = useState(false);
+  const handleLike = () => {
+    const updatedBlog = { ...blog, likes: blog.likes + 1 };
+    updateLikeMutation.mutate(updatedBlog);
+  };
 
-  const handleLike = () => updateLike(blog);
+  const handleRemove = () => {
+    const confirm = window.confirm(`Remove blog ${blog.title} by ${blog.author}`);
+    if (!confirm) return;
 
-  const handleRemove = () => deleteBlog(blog);
+    deleteBlogMutation.mutate(blog.id);
+  };
 
   return (
     <div style={blogStyle}>
@@ -45,8 +70,6 @@ const Blog = ({ blog, updateLike, deleteBlog, user }) => {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  updateLike: PropTypes.func,
-  deleteBlog: PropTypes.func,
   user: PropTypes.object,
 };
 

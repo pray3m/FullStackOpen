@@ -19,22 +19,16 @@ const BlogForm = ({ toggleVisibility }) => {
     onSuccess: () => {
       queryClient.invalidateQueries("blogs");
     },
-  });
-
-  const createBlog = async (blog) => {
-    try {
-      newBlogMutation.mutate(blog);
-      showNotification(`a new blog ${blog.title} by ${blog.author} added!`, 5)(dispatch);
-      toggleVisibility();
-    } catch (error) {
+    onError: () => {
       showNotification("failed to add blog", 5)(dispatch);
-      console.log(error);
-    }
-  };
+    },
+  });
 
   const addBlog = async (e) => {
     e.preventDefault();
-    await createBlog(blog);
+    newBlogMutation.mutate(blog);
+    showNotification(`a new blog ${blog.title} by ${blog.author} added!`, 5)(dispatch);
+    toggleVisibility();
     setBlog({ title: "", author: "", url: "" });
   };
 

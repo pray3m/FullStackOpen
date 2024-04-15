@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import PropTypes from "prop-types";
 import { useRef } from "react";
 import blogService from "../services/blogs";
@@ -7,28 +7,12 @@ import BlogForm from "./BlogForm";
 import Togglable from "./Togglable";
 
 const Home = ({ user, setUser }) => {
-  const queryClient = useQueryClient();
-
   const result = useQuery({
     queryKey: ["blogs"],
     queryFn: blogService.getAll,
   });
 
   const blogs = result.data || [];
-
-  const updateLikeMutation = useMutation({
-    mutationFn: blogService.update,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["blogs"] });
-    },
-  });
-
-  const deleteBlogMutation = useMutation({
-    mutationFn: blogService.remove,
-    onSuccess: () => {
-      queryClient.invalidateQueries("blogs");
-    },
-  });
 
   const handleLogout = () => {
     window.localStorage.removeItem("loggedUser");
@@ -38,25 +22,6 @@ const Home = ({ user, setUser }) => {
   const blogFormRef = useRef();
   const toggleVisibility = () => {
     blogFormRef.current.toggleVisibility();
-  };
-
-  const updateLike = async (blog) => {
-    try {
-      const updatedBlog = { ...blog, likes: blog.likes + 1 };
-      updateLikeMutation.mutate(updatedBlog);
-    } catch (ex) {
-      console.log("error", ex);
-    }
-  };
-
-  const deleteBlog = async (blog) => {
-    const confirm = window.confirm(`Remove blog ${blog.title} by ${blog.author}`);
-    if (!confirm) return;
-    try {
-      deleteBlogMutation.mutate(blog.id);
-    } catch (ex) {
-      console.log("error", ex);
-    }
   };
 
   const sortByLikes = (blogs) => {
@@ -74,13 +39,7 @@ const Home = ({ user, setUser }) => {
         <BlogForm toggleVisibility={toggleVisibility} />
       </Togglable>
       {sortByLikes(blogs).map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          updateLike={updateLike}
-          deleteBlog={deleteBlog}
-          user={user}
-        />
+        <Blog key={blog.id} blog={blog} user={user} />
       ))}
     </div>
   );
