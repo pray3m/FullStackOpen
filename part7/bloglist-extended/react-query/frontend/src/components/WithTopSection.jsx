@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 
 const WithTopSection = ({ children }) => {
@@ -11,14 +11,23 @@ const WithTopSection = ({ children }) => {
     dispatchAuth({ type: "CLEAR_USER" });
     navigate("/login");
   };
+
+  const navStyles = {
+    fontSize: "1.2rem",
+  };
+
   return (
     <div>
-      <h2>blogs</h2>
+      <p style={navStyles}>
+        <Link to={"/"}>~blogs</Link> / <Link to={"/users"}> ~users</Link>
+      </p>
+
+      <h1>blogs app </h1>
       <p>
         <span>{user?.name} is logged in</span>
         <button onClick={handleLogout}>logout</button>
       </p>
-      <hr />
+      <hr style={{ margin: "24px" }} />
       {children}
     </div>
   );

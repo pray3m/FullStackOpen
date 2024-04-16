@@ -85,7 +85,6 @@ blogsRouter.put("/:id", userExtractor, async (req, res, next) => {
         author,
         url,
         likes,
-        user: user,
       },
       {
         new: true,
