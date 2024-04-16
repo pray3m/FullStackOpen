@@ -1,11 +1,23 @@
-import { useState } from "react";
-import PropTypes from "prop-types";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useContext } from "react";
+import { useParams } from "react-router-dom";
+import AuthContext from "../context/AuthContext";
 import blogService from "../services/blogs";
+import WithTopSection from "./WithTopSection";
 
-const Blog = ({ blog, user }) => {
-  const [visible, setVisible] = useState(false);
+const Blog = () => {
   const queryClient = useQueryClient();
+
+  const { id } = useParams();
+
+  const result = useQuery({
+    queryKey: ["blogs", id],
+    queryFn: () => blogService.getById(id),
+  });
+
+  const blog = result.data || {};
+
+  const [user, dispatchAuth] = useContext(AuthContext);
 
   const updateLikeMutation = useMutation({
     mutationFn: blogService.update,
@@ -44,33 +56,22 @@ const Blog = ({ blog, user }) => {
   };
 
   return (
-    <div style={blogStyle}>
-      <h3>
-        <p id='blog-title'>
-          {blog.title} - {blog.author}
+    <WithTopSection>
+      <div style={blogStyle}>
+        <h3>{blog.title}</h3>
+        <p> author : {blog.author}</p>
+        <a href={blog.url}>{blog.url}</a>
+        <p>
+          Likes : {blog.likes}
+          <button onClick={handleLike} data-testid='like-btn'>
+            👍
+          </button>
         </p>
-        <button onClick={() => setVisible(!visible)}>{visible ? "hide" : "view"}</button>
-      </h3>
-      {visible && (
-        <div className='hidden-content'>
-          <a href={blog.url}>{blog.url}</a>
-          <p>
-            Likes : {blog.likes}
-            <button onClick={handleLike} data-testid='like-btn'>
-              👍
-            </button>
-          </p>
-          <p> added by: {blog?.user?.name} </p>
-          {user.username === blog?.user?.username && <button onClick={handleRemove}>remove</button>}
-        </div>
-      )}
-    </div>
+        <p> added by: {blog?.user?.name} </p>
+        {user?.username === blog?.user?.username && <button onClick={handleRemove}>remove</button>}
+      </div>
+    </WithTopSection>
   );
-};
-
-Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
-  user: PropTypes.object,
 };
 
 export default Blog;

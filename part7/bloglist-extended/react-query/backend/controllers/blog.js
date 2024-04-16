@@ -10,7 +10,10 @@ blogsRouter.get("/", async (req, res) => {
 
 blogsRouter.get("/:id", async (req, res, next) => {
   try {
-    const blog = await Blog.findById(req.params.id);
+    const blog = await Blog.findById(req.params.id).populate("user", {
+      name: 1,
+      username: 1,
+    });
     if (blog) {
       res.json(blog);
     } else {

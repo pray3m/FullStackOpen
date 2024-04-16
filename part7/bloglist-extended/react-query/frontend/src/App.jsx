@@ -8,6 +8,7 @@ import UserInfo from "./components/UserInfo";
 import UsersList from "./components/UsersList";
 import AuthContext from "./context/AuthContext";
 import blogService from "./services/blogs";
+import Blog from "./components/Blog";
 
 const App = () => {
   const [user, dispatchAuth] = useContext(AuthContext);
@@ -30,6 +31,7 @@ const App = () => {
         <Route path='/login' element={<Login />} />
         <Route path='/users' element={<UsersList />} />
         <Route path='/users/:id' element={<UserInfo />} />
+        <Route path='/blogs/:id' element={<Blog />} />
       </Routes>
     </div>
   );
