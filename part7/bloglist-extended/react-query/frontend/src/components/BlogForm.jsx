@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import PropTypes from "prop-types";
 import { useContext, useState } from "react";
-import NotificationContext, { showNotification } from "../NotificationContext";
+import NotificationContext, { showNotification } from "../context/NotificationContext";
 import blogService from "../services/blogs";
 
 const BlogForm = ({ toggleVisibility }) => {

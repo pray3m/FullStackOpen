@@ -2,9 +2,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
-import { AuthProvider } from "./AuthContext";
+import { AuthProvider } from "./context/AuthContext";
+import { NotificationContextProvider } from "./context/NotificationContext";
 import "./index.css";
-import { NotificationContextProvider } from "./NotificationContext";
 
 const queryClient = new QueryClient();
 

@@ -9,6 +9,11 @@ h3 {
   padding-top: 22px;
 }
 
+ul {
+  list-style-type: none;
+  text-align: left;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

@@ -1,12 +1,13 @@
 import { useContext, useEffect } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import "./App.css";
-import AuthContext from "./AuthContext";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Notification from "./components/Notification";
-import blogService from "./services/blogs";
+import UserInfo from "./components/UserInfo";
 import UsersList from "./components/UsersList";
+import AuthContext from "./context/AuthContext";
+import blogService from "./services/blogs";
 
 const App = () => {
   const [user, dispatchAuth] = useContext(AuthContext);
@@ -28,6 +29,7 @@ const App = () => {
         <Route path='/' element={<Home />} />
         <Route path='/login' element={<Login />} />
         <Route path='/users' element={<UsersList />} />
+        <Route path='/users/:id' element={<UserInfo />} />
       </Routes>
     </div>
   );

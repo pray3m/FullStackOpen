@@ -5,7 +5,7 @@ import Togglable from "./Togglable";
 
 import { useQuery } from "@tanstack/react-query";
 import BlogForm from "./BlogForm";
-import AuthContext from "../AuthContext";
+import AuthContext from "../context/AuthContext";
 
 const BlogList = () => {
   const [user] = useContext(AuthContext);

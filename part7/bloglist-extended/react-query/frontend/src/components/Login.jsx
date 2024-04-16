@@ -1,9 +1,9 @@
 import { useContext, useState } from "react";
-import AuthContext from "../AuthContext";
+import { useNavigate } from "react-router-dom";
+import AuthContext from "../context/AuthContext";
+import NotificationContext, { showNotification } from "../context/NotificationContext";
 import blogService from "../services/blogs";
 import loginService from "../services/login";
-import NotificationContext, { showNotification } from "../NotificationContext";
-import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [, dispatchNotification] = useContext(NotificationContext);
