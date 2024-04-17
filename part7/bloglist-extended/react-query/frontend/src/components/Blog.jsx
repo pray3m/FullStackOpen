@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 import blogService from "../services/blogs";
 import WithTopSection from "./WithTopSection";
+import Comment from "./Comment";
 
 const Blog = () => {
   const queryClient = useQueryClient();
@@ -69,6 +70,7 @@ const Blog = () => {
         </p>
         <p> added by: {blog?.user?.name} </p>
         {user?.username === blog?.user?.username && <button onClick={handleRemove}>remove</button>}
+        <Comment blog={blog} />
       </div>
     </WithTopSection>
   );
