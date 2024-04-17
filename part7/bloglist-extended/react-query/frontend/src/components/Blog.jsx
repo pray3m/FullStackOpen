@@ -18,7 +18,7 @@ const Blog = () => {
 
   const blog = result.data || {};
 
-  const [user, dispatchAuth] = useContext(AuthContext);
+  const [user] = useContext(AuthContext);
 
   const updateLikeMutation = useMutation({
     mutationFn: blogService.update,

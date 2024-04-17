@@ -11,7 +11,7 @@ import blogService from "./services/blogs";
 import Blog from "./components/Blog";
 
 const App = () => {
-  const [user, dispatchAuth] = useContext(AuthContext);
+  const [, dispatchAuth] = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
