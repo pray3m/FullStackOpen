@@ -1,5 +1,6 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
+const Comment = require("../models/comment");
 
 const { userExtractor } = require("../utils/middleware");
 
@@ -10,10 +11,12 @@ blogsRouter.get("/", async (req, res) => {
 
 blogsRouter.get("/:id", async (req, res, next) => {
   try {
-    const blog = await Blog.findById(req.params.id).populate("user", {
-      name: 1,
-      username: 1,
-    });
+    const blog = await Blog.findById(req.params.id)
+      .populate("user", {
+        name: 1,
+        username: 1,
+      })
+      .populate("comments", { content: 1 });
     if (blog) {
       res.json(blog);
     } else {
@@ -52,6 +55,31 @@ blogsRouter.post("/", userExtractor, async (req, res, next) => {
   }
 });
 
+blogsRouter.post("/:id/comments", async (req, res, next) => {
+  const { content } = req.body;
+
+  if (!content) return res.status(400).json({ error: "comment is required" });
+
+  try {
+    const blogId = req.params.id;
+    const blog = await Blog.findById(blogId);
+    if (!blog) return res.status(400).json({ error: "blog post not found" });
+
+    const newComment = new Comment({
+      content,
+      blog: blogId,
+    });
+
+    const savedComment = await newComment.save();
+    blog.comments.push(savedComment._id);
+    await blog.save();
+
+    res.status(201).json(savedComment);
+  } catch (exception) {
+    next(exception);
+  }
+});
+
 blogsRouter.delete("/:id", userExtractor, async (req, res, next) => {
   try {
     const blogToDelete = await Blog.findById(req.params.id);
@@ -63,6 +91,9 @@ blogsRouter.delete("/:id", userExtractor, async (req, res, next) => {
       return res.status(401).json({ error: "Unauthorized deletion" });
 
     const result = await Blog.deleteOne(blogToDelete);
+
+    
+
     if (result.deletedCount === 1) {
       res.status(204).end();
     } else {
