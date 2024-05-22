@@ -1,11 +1,13 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { ALL_AUTHORS, UPDATE_AUTHOR } from "../queries";
 import { useState } from "react";
+import PropTypes from "prop-types";
+import Select from "react-select";
 
 const Authors = (props) => {
   const result = useQuery(ALL_AUTHORS);
 
-  const [name, setName] = useState("");
+  const [name, setName] = useState("Select author");
   const [born, setBorn] = useState("");
   const [updateAuthor] = useMutation(UPDATE_AUTHOR, {
     refetchQueries: [{ query: ALL_AUTHORS }],
@@ -18,11 +20,12 @@ const Authors = (props) => {
   if (result.loading) {
     return <div>loading...</div>;
   }
+
   const authors = result?.data.allAuthors;
 
-  const handleUpdate = (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
-    updateAuthor({
+    await updateAuthor({
       variables: {
         name,
         setBornTo: born,
@@ -31,6 +34,8 @@ const Authors = (props) => {
     setName("");
     setBorn("");
   };
+
+  const options = authors.map((a) => ({ value: a.name, label: a.name }));
 
   return (
     <div>
@@ -54,18 +59,16 @@ const Authors = (props) => {
 
       <h2>set birthyear</h2>
       <form onSubmit={handleUpdate}>
-        <input
-          type="text"
-          name="name"
-          id="name"
-          placeholder="enter name"
-          onChange={({ target }) => setName(target.value)}
+        <Select
+          options={options}
+          value={{ value: name, label: name }}
+          onChange={({ value }) => setName(value)}
         />
-        <br />
         <input
           type="number"
           name="born"
           id="born"
+          value={born}
           placeholder="enter born"
           onChange={({ target }) => setBorn(parseInt(target.value))}
         />
@@ -74,6 +77,10 @@ const Authors = (props) => {
       </form>
     </div>
   );
+};
+
+Authors.propTypes = {
+  show: PropTypes.bool.isRequired,
 };
 
 export default Authors;

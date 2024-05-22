@@ -1,6 +1,7 @@
 import { useMutation } from "@apollo/client";
 import { useState } from "react";
 import { ALL_BOOKS, CREATE_BOOK } from "../queries";
+import PropTypes from "prop-types";
 
 const NewBook = (props) => {
   const [title, setTitle] = useState("");
@@ -80,6 +81,10 @@ const NewBook = (props) => {
       </form>
     </div>
   );
+};
+
+NewBook.propTypes = {
+  show: PropTypes.bool.isRequired,
 };
 
 export default NewBook;
