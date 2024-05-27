@@ -113,7 +113,7 @@ mongoose
 
 const typeDefs = gql`
   type Author {
-    name: String!
+    name: String
     id: ID!
     born: Int
     bookCount: Int
@@ -151,13 +151,18 @@ const resolvers = {
     authorCount: () => Author.collection.countDocuments(),
 
     allBooks: async (root, args) => {
-      if (args.author && args.genre)
-        return await Book.find({ author: args.author, genres: args.genre });
-      else if (args.author) {
+      if (args.author && args.genre) {
         const foundAuthor = await Author.findOne({ name: args.author });
-        return await Book.find({ author: foundAuthor});
+        if (!foundAuthor) return [];
+        return await Book.find({
+          author: foundAuthor._id,
+          genres: args.genre,
+        }).populate("author");
+      } else if (args.author) {
+        const foundAuthor = await Author.findOne({ name: args.author });
+        return await Book.find({ author: foundAuthor }).populate("author");
       } else if (args.genre) return await Book.find({ genres: args.genre });
-      else return await Book.find({});
+      else return await Book.find({}).populate("author");
     },
 
     allAuthors: async () => {
