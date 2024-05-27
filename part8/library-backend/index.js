@@ -191,13 +191,23 @@ const resolvers = {
         const response = await book.save();
         return response;
       } catch (error) {
-        throw new GraphQLError("saving book failed", {
-          extensions: {
-            code: "BAD_USER_INPUT",
-            invalidArgs: args,
-            error,
-          },
-        });
+        if (error.name === "ValidationError") {
+          throw new GraphQLError("validation failed", {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: args,
+              error,
+            },
+          });
+        } else {
+          throw new GraphQLError("adding book failed", {
+            extensions: {
+              code: "INTERNAL_SERVER_ERROR",
+              invalidArgs: args,
+              error,
+            },
+          });
+        }
       }
     },
 
@@ -211,13 +221,23 @@ const resolvers = {
       try {
         await author.save();
       } catch (error) {
-        throw new GraphQLError("updating author failed", {
-          extensions: {
-            code: "BAD_USER_INPUT",
-            invalidArgs: args,
-            error,
-          },
-        });
+        if (error.name === "ValidationError") {
+          throw new GraphQLError("updating author failed", {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: args,
+              error,
+            },
+          });
+        } else {
+          throw new GraphQLError("updating author failed", {
+            extensions: {
+              code: "INTERNAL_SERVER_ERROR",
+              invalidArgs: args,
+              error,
+            },
+          });
+        }
       }
       return author;
     },
