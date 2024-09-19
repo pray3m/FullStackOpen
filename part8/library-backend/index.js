@@ -1,6 +1,7 @@
 const { ApolloServer } = require("@apollo/server");
 const { startStandaloneServer } = require("@apollo/server/standalone");
 const { v1: uuid } = require("uuid");
+const jwt = require("jsonwebtoken");
 
 const { gql } = require("apollo-server");
 const mongoose = require("mongoose");
@@ -8,6 +9,7 @@ const { GraphQLError } = require("graphql");
 
 const Author = require("./models/author");
 const Book = require("./models/book");
+const User = require("./models/user");
 
 mongoose.set("strictQuery", false);
 require("dotenv").config();
@@ -127,14 +129,27 @@ const typeDefs = gql`
     genres: [String!]!
   }
 
+  type User {
+    username: String!
+    favoriteGenre: String!
+    id: ID!
+  }
+
+  type Token {
+    value: String!
+  }
+
   type Query {
     bookCount: Int!
     authorCount: Int!
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
+    me: User
   }
 
   type Mutation {
+    createUser(username: String!, favoriteGenre: String!): User
+    login(username: String!, password: String!): Token
     addBook(
       title: String!
       published: Int!
@@ -147,6 +162,7 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
+
     bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
 
@@ -178,6 +194,42 @@ const resolvers = {
   },
 
   Mutation: {
+    createUser: async (root, args) => {
+      const user = new User({
+        username: args.username,
+        favoriteGenre: args.favoriteGenre,
+      });
+
+      return user.save().catch((error) => {
+        throw new GraphQLError("Creating the user failed", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args,
+            error,
+          },
+        });
+      });
+    },
+
+    login: async (root, args) => {
+      const user = await User.findOne({ username: args.username });
+
+      if (!user || args.password !== "secret") {
+        throw new GraphQLError("Invalid Credentials", {
+          extensions: {
+            code: "UNAUTHENTICATED",
+          },
+        });
+      }
+
+      const userForToken = {
+        username: user.username,
+        id: user._id,
+      };
+
+      return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
+    },
+
     addBook: async (root, args) => {
       try {
         const existingAuthor = await Author.findOne({ name: args.author });
