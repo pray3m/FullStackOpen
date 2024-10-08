@@ -193,8 +193,8 @@ const resolvers = {
   },
 
   Author: {
-    bookCount: (root) => {
-      return Book.find({ author: root.name }).countDocuments();
+    bookCount: async (root) => {
+      return await Book.countDocuments({ author: root._id });
     },
   },
 
