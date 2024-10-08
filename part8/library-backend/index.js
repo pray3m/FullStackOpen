@@ -3,7 +3,7 @@ const { startStandaloneServer } = require("@apollo/server/standalone");
 const { v1: uuid } = require("uuid");
 const jwt = require("jsonwebtoken");
 
-const { gql } = require("apollo-server");
+const { gql } = require("graphql-tag");
 const mongoose = require("mongoose");
 const { GraphQLError } = require("graphql");
 
@@ -162,7 +162,9 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-
+    me: (root, args, context) => {
+      return context.currentUser;
+    },
     bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
 
@@ -176,8 +178,11 @@ const resolvers = {
         }).populate("author");
       } else if (args.author) {
         const foundAuthor = await Author.findOne({ name: args.author });
-        return await Book.find({ author: foundAuthor }).populate("author");
-      } else if (args.genre) return await Book.find({ genres: args.genre });
+        return await Book.find({ author: foundAuthor._id }).populate("author");
+      } else if (args.genre)
+        return await Book.find({ genres: { $in: [args.genre] } }).populate(
+          "author"
+        );
       else return await Book.find({}).populate("author");
     },
 
@@ -230,7 +235,14 @@ const resolvers = {
       return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
     },
 
-    addBook: async (root, args) => {
+    addBook: async (root, args, context) => {
+      if (!context.currentUser) {
+        throw new GraphQLError("not authenticated", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+          },
+        });
+      }
       try {
         const existingAuthor = await Author.findOne({ name: args.author });
         if (!existingAuthor) {
@@ -263,7 +275,15 @@ const resolvers = {
       }
     },
 
-    editAuthor: async (root, args) => {
+    editAuthor: async (root, args, context) => {
+      if (!context.currentUser) {
+        throw new GraphQLError("not authenticated", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+          },
+        });
+      }
+
       const author = await Author.findOne({ name: args.name });
 
       if (!author) return null;
@@ -303,6 +323,17 @@ const server = new ApolloServer({
 
 startStandaloneServer(server, {
   listen: { port: 4000 },
+  context: async ({ req, res }) => {
+    const auth = req ? req.headers.authorization : null;
+    if (auth && auth.startsWith("Bearer ")) {
+      const decodedToken = jwt.verify(
+        auth.substring(7),
+        process.env.JWT_SECRET
+      );
+      const currentUser = await User.findById(decodedToken.id);
+      return { currentUser };
+    }
+  },
 }).then(({ url }) => {
   console.log(`Server ready at ${url}`);
 });
