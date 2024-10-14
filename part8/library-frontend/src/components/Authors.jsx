@@ -4,7 +4,7 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import Select from "react-select";
 
-const Authors = (props) => {
+const Authors = ({ show, token }) => {
   const result = useQuery(ALL_AUTHORS);
 
   const [name, setName] = useState("Select author");
@@ -13,7 +13,7 @@ const Authors = (props) => {
     refetchQueries: [{ query: ALL_AUTHORS }],
   });
 
-  if (!props.show) {
+  if (!show) {
     return null;
   }
 
@@ -57,24 +57,28 @@ const Authors = (props) => {
         </tbody>
       </table>
 
-      <h2>set birthyear</h2>
-      <form onSubmit={handleUpdate}>
-        <Select
-          options={options}
-          value={{ value: name, label: name }}
-          onChange={({ value }) => setName(value)}
-        />
-        <input
-          type="number"
-          name="born"
-          id="born"
-          value={born}
-          placeholder="enter born"
-          onChange={({ target }) => setBorn(parseInt(target.value))}
-        />
-        <br />
-        <input type="submit" value="update author" />
-      </form>
+      {token && (
+        <>
+          <h2>set birthyear</h2>
+          <form onSubmit={handleUpdate}>
+            <Select
+              options={options}
+              value={{ value: name, label: name }}
+              onChange={({ value }) => setName(value)}
+            />
+            <input
+              type="number"
+              name="born"
+              id="born"
+              value={born}
+              placeholder="enter born"
+              onChange={({ target }) => setBorn(parseInt(target.value))}
+            />
+            <br />
+            <input type="submit" value="update author" />
+          </form>
+        </>
+      )}
     </div>
   );
 };
