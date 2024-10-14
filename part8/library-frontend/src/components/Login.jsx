@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { LOGIN } from "../queries";
 
 const Login = ({ show, setToken, setPage }) => {
-  const [username, setUsername] = useState();
-  const [password, setPassword] = useState();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const [login, result] = useMutation(LOGIN, {
     onError: (error) => {
@@ -38,6 +38,7 @@ const Login = ({ show, setToken, setPage }) => {
           name="username"
           value={username}
           onChange={({ target }) => setUsername(target.value)}
+          autoComplete="username"
         />
       </div>
       <div>
@@ -47,6 +48,7 @@ const Login = ({ show, setToken, setPage }) => {
           name="password"
           value={password}
           onChange={({ target }) => setPassword(target.value)}
+          autoComplete="current-password"
         />
       </div>
       <button type="submit">login</button>
