@@ -32,6 +32,7 @@ mongoose
 
 const start = async () => {
   const app = express();
+  const cors = require("cors");
   const httpServer = http.createServer(app);
 
   const wsServer = new WebSocketServer({
@@ -63,6 +64,7 @@ const start = async () => {
 
   app.use(
     "/",
+    cors(),
     express.json(),
     expressMiddleware(server, {
       context: async ({ req }) => {
