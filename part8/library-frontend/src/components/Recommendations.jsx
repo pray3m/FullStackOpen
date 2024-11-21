@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client";
-import React from "react";
+import PropTypes from "prop-types";
 import { GET_BOOKS_BY_GENRE, GET_FAVORITE_GENRE } from "../queries";
 
 const Recommendations = ({ show }) => {
@@ -49,6 +49,10 @@ const Recommendations = ({ show }) => {
       </table>
     </div>
   );
+};
+
+Recommendations.propTypes = {
+  show: PropTypes.bool.isRequired,
 };
 
 export default Recommendations;

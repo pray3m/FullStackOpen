@@ -85,6 +85,7 @@ const Authors = ({ show, token }) => {
 
 Authors.propTypes = {
   show: PropTypes.bool.isRequired,
+  token: PropTypes.string.isRequired,
 };
 
 export default Authors;

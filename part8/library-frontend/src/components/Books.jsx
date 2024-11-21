@@ -1,6 +1,8 @@
 import { useQuery, useSubscription } from "@apollo/client";
-import { ALL_BOOKS, BOOK_ADDED, GET_BOOKS_BY_GENRE } from "../queries";
+import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
+import { ALL_BOOKS, BOOK_ADDED, GET_BOOKS_BY_GENRE } from "../queries";
+import { updateCache } from "../utils/helpers";
 
 const Books = ({ show }) => {
   const [books, setBooks] = useState([]);
@@ -16,11 +18,7 @@ const Books = ({ show }) => {
       const addedBook = data.data.bookAdded;
       console.log(`${addedBook.title} added`);
 
-      client.cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
-        return {
-          allBooks: allBooks.concat(addedBook),
-        };
-      });
+      updateCache(client.cache, { query: ALL_BOOKS }, addedBook);
     },
   });
 
@@ -84,6 +82,10 @@ const Books = ({ show }) => {
       </div>
     </div>
   );
+};
+
+Books.propTypes = {
+  show: PropTypes.bool.isRequired,
 };
 
 export default Books;

@@ -1,4 +1,5 @@
 import { useMutation } from "@apollo/client";
+import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { LOGIN } from "../queries";
 
@@ -54,6 +55,12 @@ const Login = ({ show, setToken, setPage }) => {
       <button type="submit">login</button>
     </form>
   );
+};
+
+Login.propTypes = {
+  show: PropTypes.bool.isRequired,
+  setToken: PropTypes.func.isRequired,
+  setPage: PropTypes.func.isRequired,
 };
 
 export default Login;
