@@ -2,15 +2,15 @@ const { ApolloServer } = require("@apollo/server");
 const { WebSocketServer } = require("ws");
 const { useServer } = require("graphql-ws/lib/use/ws");
 const { makeExecutableSchema } = require("@graphql-tools/schema");
-
-const jwt = require("jsonwebtoken");
-const mongoose = require("mongoose");
-const express = require("express");
-const http = require("http");
 const { expressMiddleware } = require("@apollo/server/express4");
 const {
   ApolloServerPluginDrainHttpServer,
 } = require("@apollo/server/plugin/drainHttpServer");
+
+const express = require("express");
+const jwt = require("jsonwebtoken");
+const http = require("http");
+const mongoose = require("mongoose");
 
 const User = require("./models/user");
 const typeDefs = require("./schema/typeDefs");

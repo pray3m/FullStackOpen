@@ -1,7 +1,11 @@
 const { GraphQLError } = require("graphql");
+const { PubSub } = require("graphql-subscriptions");
+const pubsub = new PubSub();
 
 const Author = require("../models/author");
 const Book = require("../models/book");
+const User = require("../models/user");
+const jwt = require("jsonwebtoken");
 
 const resolvers = {
   Query: {
@@ -86,6 +90,7 @@ const resolvers = {
           },
         });
       }
+      let book;
       try {
         const existingAuthor = await Author.findOne({ name: args.author });
         if (!existingAuthor) {
@@ -94,9 +99,9 @@ const resolvers = {
         }
 
         const foundAuthor = await Author.findOne({ name: args.author });
-        const book = new Book({ ...args, author: foundAuthor });
-        const response = await book.save();
-        return response;
+        book = new Book({ ...args, author: foundAuthor._id });
+        await book.save();
+        await book.populate("author");
       } catch (error) {
         if (error.name === "ValidationError") {
           throw new GraphQLError("validation failed", {
@@ -116,6 +121,9 @@ const resolvers = {
           });
         }
       }
+
+      pubsub.publish("BOOK_ADDED", { bookAdded: book });
+      return book;
     },
 
     editAuthor: async (root, args, context) => {
@@ -154,7 +162,14 @@ const resolvers = {
           });
         }
       }
+
       return author;
+    },
+  },
+
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterableIterator(["BOOK_ADDED"]),
     },
   },
 };
