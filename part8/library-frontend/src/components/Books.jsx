@@ -1,12 +1,15 @@
 import { useQuery } from "@apollo/client";
-import { ALL_BOOKS } from "../queries";
+import { ALL_BOOKS, GET_BOOKS_BY_GENRE } from "../queries";
 import { useEffect, useState } from "react";
 
 const Books = ({ show }) => {
-  const result = useQuery(ALL_BOOKS);
-
   const [books, setBooks] = useState([]);
+
   const [selectedGenre, setSelectedGenre] = useState("");
+
+  const result = useQuery(selectedGenre ? GET_BOOKS_BY_GENRE : ALL_BOOKS, {
+    variables: selectedGenre ? { genre: selectedGenre } : {},
+  });
 
   useEffect(() => {
     if (result.data) {
@@ -33,14 +36,6 @@ const Books = ({ show }) => {
 
   const filterBooksByGenre = (genre) => {
     setSelectedGenre(genre);
-    if (genre === "") {
-      setBooks(result.data.allBooks);
-    } else {
-      const filteredBooks = result.data.allBooks.filter((book) =>
-        book.genres.includes(genre)
-      );
-      setBooks(filteredBooks);
-    }
   };
 
   return (
