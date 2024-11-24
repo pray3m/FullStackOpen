@@ -8,7 +8,7 @@ I have completed certain parts of the course and received certificates for them.
 
 ⭐ [Certificate for FullStackOpen](https://studies.cs.helsinki.fi/stats/api/certificate/fullstackopen/en/2b299fff3185f78695ab885a80b75f1c)
 
-⭐ [Certificate for Part 2](link-to-certificate)
+⭐ [Certificate for FS GraphQL](https://studies.cs.helsinki.fi/stats/api/certificate/fs-graphql/en/1c5f52cd1c0900dd002bedf3610030ef)
 
 ⭐ ...
 
