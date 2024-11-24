@@ -40,8 +40,9 @@ const resolvers = {
   },
 
   Author: {
-    bookCount: async (root) => {
-      return await Book.countDocuments({ author: root._id });
+    bookCount: async (root, args, { authorBookCountLoader }) => {
+      // Use the DataLoader to get the book count for the author
+      return await authorBookCountLoader.load(root._id);
     },
   },
 
