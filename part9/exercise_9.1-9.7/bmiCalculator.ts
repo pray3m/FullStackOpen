@@ -13,7 +13,12 @@ const calculateBmi = (heightCm: number, weightKg: number): string => {
   }
 };
 
-const height = 170;
-const weight = 58;
+const height = Number(process.argv[2]);
+const weight = Number(process.argv[3]);
+
+if (!height || !weight) {
+  console.error("Please provide valid height and weight as arguments.");
+  process.exit(1);
+}
 
 console.log(calculateBmi(height, weight));
